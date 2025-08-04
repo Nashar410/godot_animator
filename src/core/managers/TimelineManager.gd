@@ -166,8 +166,8 @@ func _handle_dialogue_smiley(event: Dictionary):
 	var duration = data.get("duration", 2.0)
 	var character_pos = character.global_position
 	
-	# Afficher le smiley
-	dialogue_system.show_smiley(emoji, character_pos, duration)
+	# PASSER L'ID DU PERSONNAGE pour le suivi
+	dialogue_system.show_dialogue(emoji, character_pos, "smiley", duration, character_id)
 	
 	print("Smiley shown: ", character_id, " says: ", emoji)
 
@@ -184,8 +184,8 @@ func _handle_dialogue_quick(event: Dictionary):
 	var duration = data.get("duration", 1.5)
 	var character_pos = character.global_position
 	
-	# Afficher la réaction rapide
-	dialogue_system.show_quick_reaction(text, character_pos, duration)
+	# PASSER L'ID DU PERSONNAGE pour le suivi
+	dialogue_system.show_dialogue(text, character_pos, "quick", duration, character_id)
 	
 	print("Quick reaction shown: ", character_id, " says: ", text)
 

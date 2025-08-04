@@ -208,8 +208,16 @@ func _load_character_portrait(character_id: String):
 func _show_smiley_dialogue():
 	_hide_all_dialogues()
 	
-	# Pas de positionnement fixe, on va suivre en temps réel
-	smiley_label.text = target_text  # Pas de typage pour smiley
+	# Mettre à jour la position AVANT d'afficher
+	_update_current_character_position()
+	
+	# Positionner immédiatement au bon endroit
+	var bubble_pos = _convert_world_to_screen(current_character_pos)
+	bubble_pos += Vector2(-40, -120)
+	bubble_pos = _clamp_to_screen(bubble_pos, Vector2(80, 60))
+	smiley_background.position = bubble_pos
+	
+	smiley_label.text = target_text
 	smiley_container.visible = true
 	
 	# Animation bounce
@@ -231,10 +239,19 @@ func _animate_smiley_bounce():
 func _show_quick_dialogue():
 	_hide_all_dialogues()
 	
-	# Pas de positionnement fixe, on va suivre en temps réel
+	# Mettre à jour la position AVANT d'afficher
+	_update_current_character_position()
+	
+	# Ajuster taille selon texte
 	var text_width = target_text.length() * 10 + 20
 	text_width = max(text_width, 60)
 	quick_background.size = Vector2(text_width, 40)
+	
+	# Positionner immédiatement au bon endroit
+	var quick_pos = _convert_world_to_screen(current_character_pos)
+	quick_pos += Vector2(-text_width/2, -100)  # Centré et au-dessus
+	quick_pos = _clamp_to_screen(quick_pos, Vector2(text_width, 40))
+	quick_background.position = quick_pos
 	
 	quick_container.visible = true
 	
@@ -290,34 +307,30 @@ func _process(delta):
 			_on_typing_finished()
 
 func _update_character_following():
+	# TOUJOURS mettre à jour la position du personnage d'abord
+	_update_current_character_position()
+	
 	# Suivre le personnage pour smiley et quick
 	if current_dialogue_type == DialogueType.SMILEY and smiley_container.visible:
 		var bubble_pos = _convert_world_to_screen(current_character_pos)
-		bubble_pos += Vector2(-40, -100)  # DIRECTEMENT AU-DESSUS de la tête
+		bubble_pos += Vector2(-40, -120)  # Plus haut au-dessus de la tête
 		bubble_pos = _clamp_to_screen(bubble_pos, Vector2(80, 60))
 		smiley_background.position = bubble_pos
-		
-		# Mise à jour en temps réel de la position du personnage
-		_update_current_character_position()
 	
 	elif current_dialogue_type == DialogueType.QUICK and quick_container.visible:
 		var quick_pos = _convert_world_to_screen(current_character_pos)
-		quick_pos += Vector2(-60, -80)  # DIRECTEMENT AU-DESSUS de la tête
+		quick_pos += Vector2(-60, -100)  # Plus haut au-dessus de la tête
 		quick_pos = _clamp_to_screen(quick_pos, Vector2(120, 40))
 		quick_background.position = quick_pos
-		
-		# Mise à jour en temps réel de la position du personnage
-		_update_current_character_position()
 
 func _update_current_character_position():
-	# Récupérer la position actuelle du personnage depuis le TimelineManager
-	var timeline_manager = get_node("../../../../TimelineController")
-	if timeline_manager:
-		var character_container = get_node("../../CharacterContainer")
-		# On doit stocker l'ID du personnage pour le retrouver
-		var character = character_container.get_node_or_null(current_character_id)
-		if character:
-			current_character_pos = character.global_position
+	# Récupérer la position actuelle du personnage
+	var character_container = get_node("../../CharacterContainer")
+	var character = character_container.get_node_or_null(current_character_id)
+	if character:
+		current_character_pos = character.global_position
+		#print("Updated character position for ", current_character_id, ": ", current_character_pos)
+
 func _on_typing_finished():
 	match current_dialogue_type:
 		DialogueType.MAIN:
