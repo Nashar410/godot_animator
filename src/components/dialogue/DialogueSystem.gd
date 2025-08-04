@@ -208,17 +208,10 @@ func _load_character_portrait(character_id: String):
 func _show_smiley_dialogue():
 	_hide_all_dialogues()
 	
-	# Mettre à jour la position AVANT d'afficher
-	_update_current_character_position()
-	
-	# Positionner immédiatement au bon endroit
-	var bubble_pos = _convert_world_to_screen(current_character_pos)
-	bubble_pos += Vector2(-40, -120)
-	bubble_pos = _clamp_to_screen(bubble_pos, Vector2(80, 60))
-	smiley_background.position = bubble_pos
-	
 	smiley_label.text = target_text
 	smiley_container.visible = true
+	
+	# Position initiale sera mise à jour par _follow_character_realtime()
 	
 	# Animation bounce
 	_animate_smiley_bounce()
@@ -226,7 +219,7 @@ func _show_smiley_dialogue():
 	# Auto-hide
 	var timer = get_tree().create_timer(current_duration)
 	timer.timeout.connect(_hide_dialogue)
-
+	
 func _animate_smiley_bounce():
 	var tween = create_tween()
 	var original_scale = smiley_background.scale
@@ -239,21 +232,14 @@ func _animate_smiley_bounce():
 func _show_quick_dialogue():
 	_hide_all_dialogues()
 	
-	# Mettre à jour la position AVANT d'afficher
-	_update_current_character_position()
-	
 	# Ajuster taille selon texte
-	var text_width = target_text.length() * 10 + 20
-	text_width = max(text_width, 60)
+	var text_width = target_text.length() * 12 + 30
+	text_width = max(text_width, 80)
 	quick_background.size = Vector2(text_width, 40)
 	
-	# Positionner immédiatement au bon endroit
-	var quick_pos = _convert_world_to_screen(current_character_pos)
-	quick_pos += Vector2(-text_width/2, -100)  # Centré et au-dessus
-	quick_pos = _clamp_to_screen(quick_pos, Vector2(text_width, 40))
-	quick_background.position = quick_pos
-	
 	quick_container.visible = true
+	
+	# Position initiale sera mise à jour par _follow_character_realtime()
 	
 	# Typage ultra-rapide
 	_start_typing(DialogueType.QUICK)
@@ -262,7 +248,6 @@ func _show_quick_dialogue():
 	var hide_timer = max(current_duration, 1.0)
 	var timer = get_tree().create_timer(hide_timer)
 	timer.timeout.connect(_hide_dialogue)
-
 # === SYSTÈME DE TYPAGE ===
 func _start_typing(dialogue_type: DialogueType):
 	is_typing = true
@@ -278,8 +263,9 @@ func _start_typing(dialogue_type: DialogueType):
 			quick_label.text = ""
 
 func _process(delta):
-	# NOUVELLE LOGIQUE : Suivre le personnage en temps réel
-	_update_character_following()
+	# Suivi en temps réel des personnages
+	if current_character_id != "" and (current_dialogue_type == DialogueType.SMILEY or current_dialogue_type == DialogueType.QUICK):
+		_follow_character_realtime()
 	
 	# Typage existant
 	if not is_typing:
@@ -306,30 +292,38 @@ func _process(delta):
 			is_typing = false
 			_on_typing_finished()
 
-func _update_character_following():
-	# TOUJOURS mettre à jour la position du personnage d'abord
-	_update_current_character_position()
-	
-	# Suivre le personnage pour smiley et quick
-	if current_dialogue_type == DialogueType.SMILEY and smiley_container.visible:
-		var bubble_pos = _convert_world_to_screen(current_character_pos)
-		bubble_pos += Vector2(-40, -120)  # Plus haut au-dessus de la tête
-		bubble_pos = _clamp_to_screen(bubble_pos, Vector2(80, 60))
-		smiley_background.position = bubble_pos
-	
-	elif current_dialogue_type == DialogueType.QUICK and quick_container.visible:
-		var quick_pos = _convert_world_to_screen(current_character_pos)
-		quick_pos += Vector2(-60, -100)  # Plus haut au-dessus de la tête
-		quick_pos = _clamp_to_screen(quick_pos, Vector2(120, 40))
-		quick_background.position = quick_pos
-
-func _update_current_character_position():
+func _follow_character_realtime():
 	# Récupérer la position actuelle du personnage
 	var character_container = get_node("../../CharacterContainer")
 	var character = character_container.get_node_or_null(current_character_id)
-	if character:
-		current_character_pos = character.global_position
-		#print("Updated character position for ", current_character_id, ": ", current_character_pos)
+	
+	if not character:
+		return
+	
+	var character_pos = character.global_position
+	var animated_sprite = character.get_node_or_null("AnimatedSprite2D")
+	
+	# Calculer l'offset basé sur la taille du sprite
+	var sprite_height = 64  # Défaut pour pixel art
+	if animated_sprite and animated_sprite.sprite_frames:
+		# Essayer de récupérer la texture de l'animation actuelle
+		var current_animation = animated_sprite.animation
+		if current_animation != "" and animated_sprite.sprite_frames.has_animation(current_animation):
+			var frame_count = animated_sprite.sprite_frames.get_frame_count(current_animation)
+			if frame_count > 0:
+				var texture = animated_sprite.sprite_frames.get_frame_texture(current_animation, 0)
+				if texture:
+					sprite_height = texture.get_height() * animated_sprite.scale.y
+	
+	# Positionner selon le type de dialogue
+	if current_dialogue_type == DialogueType.SMILEY:
+		var bubble_pos = character_pos + Vector2(-40, -sprite_height - 20)
+		smiley_background.global_position = bubble_pos
+		
+	elif current_dialogue_type == DialogueType.QUICK:
+		var text_width = quick_background.size.x
+		var quick_pos = character_pos + Vector2(-text_width/2, -sprite_height - 10)
+		quick_background.global_position = quick_pos
 
 func _on_typing_finished():
 	match current_dialogue_type:
@@ -353,19 +347,6 @@ func _hide_dialogue():
 	_hide_all_dialogues()
 	hide()
 	dialogue_finished.emit()
-
-func _convert_world_to_screen(world_pos: Vector2) -> Vector2:
-	var camera = get_viewport().get_camera_2d()
-	if camera:
-		var viewport_size = Vector2(get_viewport().size)
-		return world_pos - camera.global_position + viewport_size / 2
-	return world_pos
-
-func _clamp_to_screen(pos: Vector2, size: Vector2) -> Vector2:
-	var viewport_size = Vector2(get_viewport().size)
-	pos.x = clamp(pos.x, 10, viewport_size.x - size.x - 10)
-	pos.y = clamp(pos.y, 10, viewport_size.y - size.y - 10)
-	return pos
 
 func _create_arrow_texture() -> Texture2D:
 	var image = Image.create(32, 32, false, Image.FORMAT_RGBA8)
