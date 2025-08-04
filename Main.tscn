@@ -1,0 +1,64 @@
+[gd_scene load_steps=11 format=3 uid="uid://jvn4cfaki5hr"]
+
+[ext_resource type="Script" uid="uid://dk3prhes70tme" path="res://src/core/managers/EpisodeController.gd" id="1_glv2v"]
+[ext_resource type="Script" uid="uid://bbisfhrhmu8at" path="res://Main.gd" id="1_uu6xs"]
+[ext_resource type="Script" uid="uid://do4760j0xoyk" path="res://src/core/managers/TimelineManager.gd" id="3_cm0pq"]
+[ext_resource type="Script" uid="uid://b876mkr681116" path="res://src/components/dialogue/DialogueSystem.gd" id="3_fos0i"]
+[ext_resource type="Script" uid="uid://byl3idf2sqn3n" path="res://src/core/factories/CharacterFactory.gd" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://britvh1tdq03r" path="res://src/core/managers/AudioManager.gd" id="4_3dxm6"]
+[ext_resource type="Script" uid="uid://dii8vg7bwlkmb" path="res://src/core/managers/CameraController.gd" id="4_lgr22"]
+[ext_resource type="Script" uid="uid://dwovf4evangyd" path="res://src/core/managers/BackgroundManager.gd" id="8_trn2v"]
+[ext_resource type="Script" uid="uid://b8fx335m0odjg" path="res://src/core/exporters/VideoExporter.gd" id="9_03owx"]
+[ext_resource type="Script" uid="uid://bg3bxikyqhwuk" path="res://src/core/managers/EffectsManager.gd" id="10_wkp8b"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_uu6xs")
+
+[node name="EpisodeController" type="Node" parent="."]
+script = ExtResource("1_glv2v")
+
+[node name="SceneContainer" type="Node2D" parent="."]
+
+[node name="Background" type="ParallaxBackground" parent="SceneContainer"]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="SceneContainer"]
+
+[node name="CharacterContainer" type="Node2D" parent="SceneContainer"]
+
+[node name="EffectsContainer" type="Node2D" parent="SceneContainer"]
+
+[node name="UIContainer" type="CanvasLayer" parent="SceneContainer"]
+
+[node name="DialogueSystem" type="Control" parent="SceneContainer/UIContainer"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("3_fos0i")
+
+[node name="CameraSystem" type="Camera2D" parent="."]
+position = Vector2(400, 300)
+zoom = Vector2(4, 4)
+script = ExtResource("4_lgr22")
+
+[node name="AudioSystem" type="Node" parent="."]
+script = ExtResource("4_3dxm6")
+
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="AudioSystem"]
+
+[node name="SFXPool" type="Node" parent="AudioSystem"]
+
+[node name="VoicePlayer" type="AudioStreamPlayer" parent="AudioSystem"]
+
+[node name="TimelineController" type="Node" parent="."]
+script = ExtResource("3_cm0pq")
+
+[node name="CharacterFactory" type="Node" parent="."]
+script = ExtResource("3_r0du0")
+
+[node name="BackgroundManager" type="Node" parent="."]
+script = ExtResource("8_trn2v")
+
+[node name="VideoExporter" type="Node" parent="."]
+script = ExtResource("9_03owx")
+
+[node name="EffectsManager" type="Node" parent="."]
+script = ExtResource("10_wkp8b")

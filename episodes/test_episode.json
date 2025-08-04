@@ -1,0 +1,222 @@
+{
+  "episode": {
+	"id": "test_effects_001",
+	"title": "Test Système d'Effets Visuels",
+	"metadata": {
+	  "duration": 30,
+	  "resolution": "1920x1080",
+	  "fps": 30,
+	  "pixelScale": 4
+	},
+	"scenes": [
+	  {
+		"id": "scene_effects",
+		"duration": 28,
+		"timeline": [
+		  {
+			"time": 0.0,
+			"type": "character_enter",
+			"data": {
+			  "character": "alex_1",
+			  "position": {"x": 400, "y": 400},
+			  "scale": 0.5
+			}
+		  },
+		  {
+			"time": 1.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Je vais tester tous les effets !",
+			  "duration": 2.5
+			}
+		  },
+		  {
+			"time": 2.0,
+			"type": "start_weather",
+			"data": {
+			  "weather": "rain",
+			  "intensity": 0.7
+			}
+		  },
+		  {
+			"time": 4.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Oh non ! Il pleut !",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 6.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 300, "y": 350},
+			  "params": {"intensity": 1.5}
+			}
+		  },
+		  {
+			"time": 7.0,
+			"type": "screen_flash",
+			"data": {
+			  "color": {"r": 1.0, "g": 1.0, "b": 0.0, "a": 0.8},
+			  "duration": 0.3
+			}
+		  },
+		  {
+			"time": 8.0,
+			"type": "stop_weather",
+			"data": {
+			  "weather": "rain"
+			}
+		  },
+		  {
+			"time": 8.5,
+			"type": "start_weather",
+			"data": {
+			  "weather": "snow",
+			  "intensity": 1.0
+			}
+		  },
+		  {
+			"time": 9.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Wahou ! Maintenant il neige !",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 11.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "explosion",
+			  "position": {"x": 600, "y": 300}
+			}
+		  },
+		  {
+			"time": 11.2,
+			"type": "screen_flash",
+			"data": {
+			  "color": {"r": 1.0, "g": 0.5, "b": 0.0, "a": 1.0},
+			  "duration": 0.1
+			}
+		  },
+		  {
+			"time": 12.0,
+			"type": "camera_shake",
+			"data": {
+			  "intensity": 15.0,
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 13.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "BOOM ! Explosion !",
+			  "duration": 2.0,
+			  "bubble_style": "shout"
+			}
+		  },
+		  {
+			"time": 15.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "fire",
+			  "position": {"x": 600, "y": 450}
+			}
+		  },
+		  {
+			"time": 16.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Du feu ! Attention !",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 18.0,
+			"type": "stop_weather",
+			"data": {
+			  "weather": "snow"
+			}
+		  },
+		  {
+			"time": 18.5,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 400, "y": 300},
+			  "params": {"intensity": 2.0}
+			}
+		  },
+		  {
+			"time": 19.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 500, "y": 350},
+			  "params": {"intensity": 1.5}
+			}
+		  },
+		  {
+			"time": 19.5,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 350, "y": 400},
+			  "params": {"intensity": 1.8}
+			}
+		  },
+		  {
+			"time": 20.0,
+			"type": "screen_flash",
+			"data": {
+			  "color": {"r": 0.5, "g": 0.0, "b": 1.0, "a": 0.6},
+			  "duration": 0.5
+			}
+		  },
+		  {
+			"time": 21.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Magie partout ! C'est magnifique !",
+			  "duration": 3.0
+			}
+		  },
+		  {
+			"time": 24.0,
+			"type": "start_weather",
+			"data": {
+			  "weather": "rain",
+			  "intensity": 0.3
+			}
+		  },
+		  {
+			"time": 25.0,
+			"type": "dialogue",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Une petite pluie pour finir...",
+			  "duration": 2.5
+			}
+		  },
+		  {
+			"time": 27.0,
+			"type": "stop_weather",
+			"data": {
+			  "weather": "rain"
+			}
+		  }
+		]
+	  }
+	]
+  }
+}
