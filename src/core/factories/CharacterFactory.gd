@@ -17,29 +17,28 @@ func create_character(character_id: String) -> CharacterBody2D:
 	var character = CharacterBody2D.new()
 	character.name = character_id
 	
-	# Pour le chargement des sprites, on utilise toujours le nom de base
 	var base_character_id = _extract_base_character_id(character_id)
-	
-	# Charger la configuration du personnage
 	var config = _load_character_config(base_character_id)
 	
-	# === SYSTÈME D'OMBRE (AJOUTÉ EN PREMIER) ===
-	var shadow_system = ShadowSystem.new()
+	# === SYSTÈME D'OMBRE ===
+	var shadow_system = preload("res://src/components/shadows/ShadowSystem.gd").new()
 	character.add_child(shadow_system)
 	
-	# Sprite animé
+	# === SPRITE ANIMÉ ===
 	var animated_sprite = AnimatedSprite2D.new()
 	animated_sprite.name = "AnimatedSprite2D"
 	character.add_child(animated_sprite)
 	
-	# Appliquer le scale depuis la config
 	var sprite_scale = config.get("sprite_scale", 1.0)
 	animated_sprite.scale = Vector2(sprite_scale, sprite_scale)
 	
-	# Chargement automatique des animations
 	_load_animations(animated_sprite, base_character_id)
 	
-	# Collision avec taille depuis config
+	# === SYSTÈME DE BULLE DIALOGUE (NOUVEAU) ===
+	var dialogue_bubble = preload("res://src/components/dialogue/DialogueBubble.gd").new()
+	character.add_child(dialogue_bubble)
+	
+	# === COLLISION ===
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
 	var collision_size = config.get("collision_size", {"width": 16, "height": 24})
@@ -48,11 +47,11 @@ func create_character(character_id: String) -> CharacterBody2D:
 	collision_shape.name = "CollisionShape2D"
 	character.add_child(collision_shape)
 	
-	# Stocker la config dans le personnage pour usage ultérieur
 	character.set_meta("config", config)
 	
-	print("Character created with shadow: ", character_id)
+	print("Character created with shadow and dialogue bubble: ", character_id)
 	return character
+	
 
 func _extract_base_character_id(character_id: String) -> String:
 	# Si c'est "alex_1" ou "alex_2", on retourne "hero_alex_default"

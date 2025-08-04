@@ -162,15 +162,20 @@ func _handle_dialogue_smiley(event: Dictionary):
 		push_error("Character not found for smiley dialogue: " + character_id)
 		return
 	
+	# Trouver la bulle du personnage
+	var dialogue_bubble = character.get_node_or_null("DialogueBubble")
+	if not dialogue_bubble:
+		push_error("DialogueBubble not found on character: " + character_id)
+		return
+	
 	var emoji = data.emoji
 	var duration = data.get("duration", 2.0)
-	var character_pos = character.global_position
 	
-	# PASSER L'ID DU PERSONNAGE pour le suivi
-	dialogue_system.show_dialogue(emoji, character_pos, "smiley", duration, character_id)
+	# Afficher via la bulle du personnage
+	dialogue_bubble.show_smiley(emoji, duration)
 	
 	print("Smiley shown: ", character_id, " says: ", emoji)
-
+	
 func _handle_dialogue_quick(event: Dictionary):
 	var data = event.data
 	var character_id = data.character
@@ -180,12 +185,17 @@ func _handle_dialogue_quick(event: Dictionary):
 		push_error("Character not found for quick dialogue: " + character_id)
 		return
 	
+	# Trouver la bulle du personnage
+	var dialogue_bubble = character.get_node_or_null("DialogueBubble")
+	if not dialogue_bubble:
+		push_error("DialogueBubble not found on character: " + character_id)
+		return
+	
 	var text = data.text
 	var duration = data.get("duration", 1.5)
-	var character_pos = character.global_position
 	
-	# PASSER L'ID DU PERSONNAGE pour le suivi
-	dialogue_system.show_dialogue(text, character_pos, "quick", duration, character_id)
+	# Afficher via la bulle du personnage
+	dialogue_bubble.show_quick_reaction(text, duration)
 	
 	print("Quick reaction shown: ", character_id, " says: ", text)
 
