@@ -37,6 +37,10 @@ func _setup_shadow():
 	var main_sprite = parent_character.get_node_or_null("AnimatedSprite2D")
 	
 	if main_sprite:
+		# NOUVEAU : Adapter l'échelle de l'ombre au sprite
+		shadow_scale = Vector2(main_sprite.scale.x, main_sprite.scale.y * 0.6)
+		shadow_sprite.scale = shadow_scale
+		
 		# Méthode 1: Essayer de charger une texture d'ombre personnalisée
 		_try_load_custom_shadow()
 		

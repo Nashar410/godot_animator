@@ -26,23 +26,27 @@ var bubble_offset: Vector2 = Vector2(0, -80)  # Au-dessus de la tête
 
 func _ready():
 	name = "DialogueBubble"
+	z_index = 10  # AU-DESSUS de tout
 	_setup_smiley_bubble()
 	_setup_quick_bubble()
 	hide_all_bubbles()
+	
+	# Position absolue au-dessus du sprite, pas de l'ombre
+	bubble_offset = Vector2(0, -100)  # Plus haut pour être vraiment au-dessus
 
 func _setup_smiley_bubble():
-	# Container smiley
+	# Container smiley - PLUS PETIT
 	smiley_background = NinePatchRect.new()
 	smiley_background.name = "SmileyBubble"
 	smiley_background.texture = _create_smiley_bubble_texture()
-	smiley_background.size = Vector2(80, 60)
-	smiley_background.position = bubble_offset + Vector2(-40, 0)  # Centré
+	smiley_background.size = Vector2(50, 40)  # RÉDUIT de 80x60 à 50x40
+	smiley_background.position = bubble_offset + Vector2(-25, 0)  # Recentré
 	add_child(smiley_background)
 	
-	# Label emoji
+	# Label emoji - PLUS PETIT
 	smiley_label = Label.new()
 	smiley_label.name = "SmileyText"
-	smiley_label.add_theme_font_size_override("font_size", 36)
+	smiley_label.add_theme_font_size_override("font_size", 20)  # RÉDUIT de 36 à 20
 	smiley_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	smiley_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	smiley_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -51,18 +55,18 @@ func _setup_smiley_bubble():
 	smiley_background.visible = false
 
 func _setup_quick_bubble():
-	# Container quick
+	# Container quick - PLUS PETIT
 	quick_background = ColorRect.new()
 	quick_background.name = "QuickBubble"
 	quick_background.color = Color(0, 0, 0, 0.8)
-	quick_background.size = Vector2(120, 40)
-	quick_background.position = bubble_offset + Vector2(-60, 0)  # Centré
+	quick_background.size = Vector2(80, 30)  # RÉDUIT de 120x40 à 80x30
+	quick_background.position = bubble_offset + Vector2(-40, 0)  # Recentré
 	add_child(quick_background)
 	
-	# Label texte rapide
+	# Label texte rapide - PLUS PETIT
 	quick_label = Label.new()
 	quick_label.name = "QuickText"
-	quick_label.add_theme_font_size_override("font_size", 18)
+	quick_label.add_theme_font_size_override("font_size", 14)  # RÉDUIT de 18 à 14
 	quick_label.add_theme_color_override("font_color", Color.WHITE)
 	quick_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	quick_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -106,10 +110,10 @@ func show_quick_reaction(text: String, duration: float = 1.5):
 	target_text = text
 	current_text = ""
 	
-	# Ajuster taille selon texte
-	var text_width = text.length() * 12 + 30
-	text_width = max(text_width, 80)
-	quick_background.size = Vector2(text_width, 40)
+	# Ajuster taille selon texte - PLUS PETIT
+	var text_width = text.length() * 8 + 20  # RÉDUIT de 12 à 8
+	text_width = max(text_width, 50)  # RÉDUIT de 80 à 50
+	quick_background.size = Vector2(text_width, 30)  # RÉDUIT hauteur de 40 à 30
 	quick_background.position = bubble_offset + Vector2(-text_width/2, 0)  # Recentrer
 	
 	quick_background.visible = true

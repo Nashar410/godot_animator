@@ -372,11 +372,23 @@ func _handle_character_enter(event: Dictionary):
 	if data.has("position"):
 		character.position = Vector2(data.position.x, data.position.y)
 	
-	# Scale personnalisé pour cet événement
+	# Scale personnalisé pour cet événement + ADAPTATION OMBRE
 	if data.has("scale"):
 		var animated_sprite = character.get_node("AnimatedSprite2D")
 		var scale_value = data.scale
 		animated_sprite.scale = Vector2(scale_value, scale_value)
+		
+		# NOUVEAU : Adapter l'ombre au scale
+		var shadow_system = character.get_node_or_null("ShadowSystem")
+		if shadow_system:
+			shadow_system.shadow_scale = Vector2(scale_value, scale_value * 0.6)
+			shadow_system.shadow_sprite.scale = shadow_system.shadow_scale
+	
+	# NOUVEAU : Désactiver ombre si demandé
+	if data.has("shadow_enabled") and not data.shadow_enabled:
+		var shadow_system = character.get_node_or_null("ShadowSystem")
+		if shadow_system:
+			shadow_system.hide_shadow()
 	
 	# Animation initiale
 	var animated_sprite = character.get_node("AnimatedSprite2D")

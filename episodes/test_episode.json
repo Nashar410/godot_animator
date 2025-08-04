@@ -19,7 +19,7 @@
 			"data": {
 			  "character": "alex_1",
 			  "position": {"x": 200, "y": 400},
-			  "scale": 0.1,
+			  "scale": 0.3,
 			  "animation": "idle",
 			  "direction": "e"
 			}
@@ -84,7 +84,7 @@
 			"data": {
 			  "character": "alex_2",
 			  "position": {"x": 1000, "y": 400},
-			  "scale": 0.1
+			  "scale": 0.3
 			}
 		  },
 		  {
