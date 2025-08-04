@@ -1,218 +1,460 @@
 {
   "episode": {
-	"id": "test_effects_001",
-	"title": "Test Système d'Effets Visuels",
+	"id": "showcase_mvp_001",
+	"title": "Showcase MVP - Toutes les Features",
 	"metadata": {
-	  "duration": 30,
+	  "duration": 60,
 	  "resolution": "1920x1080",
 	  "fps": 30,
 	  "pixelScale": 4
 	},
 	"scenes": [
 	  {
-		"id": "scene_effects",
-		"duration": 28,
+		"id": "scene_showcase",
+		"duration": 58,
 		"timeline": [
 		  {
 			"time": 0.0,
 			"type": "character_enter",
 			"data": {
 			  "character": "alex_1",
-			  "position": {"x": 400, "y": 400},
-			  "scale": 0.5
+			  "position": {"x": 200, "y": 400},
+			  "scale": 1.0,
+			  "animation": "idle",
+			  "direction": "e"
 			}
 		  },
 		  {
 			"time": 1.0,
-			"type": "dialogue",
+			"type": "dialogue_main",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Je vais tester tous les effets !",
-			  "duration": 2.5
+			  "text": "[color=yellow]Bonjour ![/color]\n\nJe vais vous montrer toutes les [b]nouvelles fonctionnalités[/b] de notre système !",
+			  "duration": 5.0
 			}
 		  },
 		  {
 			"time": 2.0,
-			"type": "start_weather",
-			"data": {
-			  "weather": "rain",
-			  "intensity": 0.7
-			}
-		  },
-		  {
-			"time": 4.0,
-			"type": "dialogue",
+			"type": "camera_follow",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Oh non ! Il pleut !",
-			  "duration": 2.0
+			  "offset": {"x": 0, "y": -50},
+			  "smoothing": 3.0
 			}
 		  },
 		  {
-			"time": 6.0,
-			"type": "play_effect",
+			"time": 6.5,
+			"type": "dialogue_quick",
 			"data": {
-			  "effect": "magic_sparkles",
-			  "position": {"x": 300, "y": 350},
-			  "params": {"intensity": 1.5}
+			  "character": "alex_1",
+			  "text": "En marche !",
+			  "duration": 1.5
 			}
 		  },
 		  {
 			"time": 7.0,
-			"type": "screen_flash",
+			"type": "character_move",
 			"data": {
-			  "color": {"r": 1.0, "g": 1.0, "b": 0.0, "a": 0.8},
-			  "duration": 0.3
+			  "character": "alex_1",
+			  "to": {"x": 600, "y": 400},
+			  "duration": 3.0
 			}
 		  },
 		  {
 			"time": 8.0,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_1",
+			  "emoji": "😊",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 10.5,
+			"type": "dialogue_main",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Regardez ! J'ai maintenant une [color=red]ombre réaliste[/color] sous mes pieds !\n\nEt ce dialogue utilise le [b]style Pokémon[/b] en plein écran.",
+			  "duration": 6.0
+			}
+		  },
+		  {
+			"time": 12.0,
+			"type": "character_enter",
+			"data": {
+			  "character": "alex_2",
+			  "position": {"x": 1000, "y": 400},
+			  "scale": 0.8
+			}
+		  },
+		  {
+			"time": 13.0,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_2",
+			  "text": "Salut !",
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 14.0,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_2",
+			  "emoji": "👋",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 16.5,
+			"type": "dialogue_main",
+			"data": {
+			  "character": "alex_2",
+			  "text": "Moi aussi j'ai une ombre ! Et nous pouvons avoir [color=green]plusieurs types de dialogues[/color] différents.",
+			  "duration": 5.0
+			}
+		  },
+		  {
+			"time": 18.0,
+			"type": "character_move",
+			"data": {
+			  "character": "alex_2",
+			  "to": {"x": 700, "y": 400},
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 21.0,
+			"type": "camera_move",
+			"data": {
+			  "position": {"x": 650, "y": 350},
+			  "duration": 2.0,
+			  "easing": "ease_in_out"
+			}
+		  },
+		  {
+			"time": 22.0,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Wow !",
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 22.5,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_2",
+			  "text": "Cool !",
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 24.0,
+			"type": "dialogue_main",
+			"data": {
+			  "text": "Testons maintenant les [b]effets visuels[/b] et le système météo !",
+			  "duration": 4.0
+			}
+		  },
+		  {
+			"time": 25.0,
+			"type": "start_weather",
+			"data": {
+			  "weather": "rain",
+			  "intensity": 0.8
+			}
+		  },
+		  {
+			"time": 26.0,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_1",
+			  "emoji": "🌧️",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 26.5,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_2",
+			  "emoji": "☔",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 28.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 650, "y": 300},
+			  "params": {"intensity": 2.0}
+			}
+		  },
+		  {
+			"time": 28.5,
+			"type": "screen_flash",
+			"data": {
+			  "color": {"r": 1.0, "g": 1.0, "b": 0.0, "a": 0.6},
+			  "duration": 0.3
+			}
+		  },
+		  {
+			"time": 29.0,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Magie !",
+			  "duration": 1.5
+			}
+		  },
+		  {
+			"time": 29.5,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_2",
+			  "text": "Incroyable !",
+			  "duration": 1.5
+			}
+		  },
+		  {
+			"time": 31.0,
 			"type": "stop_weather",
 			"data": {
 			  "weather": "rain"
 			}
 		  },
 		  {
-			"time": 8.5,
-			"type": "start_weather",
+			"time": 32.0,
+			"type": "camera_zoom",
 			"data": {
-			  "weather": "snow",
-			  "intensity": 1.0
+			  "zoom": 6.0,
+			  "duration": 2.0,
+			  "easing": "ease_in_out"
 			}
 		  },
 		  {
-			"time": 9.0,
-			"type": "dialogue",
+			"time": 33.0,
+			"type": "dialogue_main",
+			"data": {
+			  "text": "Zoom sur nos [color=blue]ombres détaillées[/color] !\n\nElles suivent parfaitement nos mouvements et animations.",
+			  "duration": 5.0
+			}
+		  },
+		  {
+			"time": 35.0,
+			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Wahou ! Maintenant il neige !",
-			  "duration": 2.0
+			  "to": {"x": 620, "y": 400},
+			  "duration": 1.5
 			}
 		  },
 		  {
-			"time": 11.0,
-			"type": "play_effect",
+			"time": 36.0,
+			"type": "character_move",
 			"data": {
-			  "effect": "explosion",
-			  "position": {"x": 600, "y": 300}
+			  "character": "alex_2",
+			  "to": {"x": 680, "y": 400},
+			  "duration": 1.5
 			}
 		  },
 		  {
-			"time": 11.2,
-			"type": "screen_flash",
+			"time": 38.0,
+			"type": "camera_zoom",
 			"data": {
-			  "color": {"r": 1.0, "g": 0.5, "b": 0.0, "a": 1.0},
-			  "duration": 0.1
+			  "zoom": 4.0,
+			  "duration": 1.5
 			}
 		  },
 		  {
-			"time": 12.0,
+			"time": 39.0,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_1",
+			  "emoji": "✨",
+			  "duration": 1.5
+			}
+		  },
+		  {
+			"time": 39.5,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_2",
+			  "emoji": "⭐",
+			  "duration": 1.5
+			}
+		  },
+		  {
+			"time": 41.0,
 			"type": "camera_shake",
 			"data": {
-			  "intensity": 15.0,
+			  "intensity": 10.0,
 			  "duration": 1.0
 			}
 		  },
 		  {
-			"time": 13.0,
-			"type": "dialogue",
-			"data": {
-			  "character": "alex_1",
-			  "text": "BOOM ! Explosion !",
-			  "duration": 2.0,
-			  "bubble_style": "shout"
-			}
-		  },
-		  {
-			"time": 15.0,
+			"time": 41.2,
 			"type": "play_effect",
 			"data": {
-			  "effect": "fire",
-			  "position": {"x": 600, "y": 450}
+			  "effect": "explosion",
+			  "position": {"x": 800, "y": 350}
 			}
 		  },
 		  {
-			"time": 16.0,
-			"type": "dialogue",
+			"time": 41.5,
+			"type": "screen_flash",
+			"data": {
+			  "color": {"r": 1.0, "g": 0.5, "b": 0.0, "a": 1.0},
+			  "duration": 0.2
+			}
+		  },
+		  {
+			"time": 42.0,
+			"type": "dialogue_quick",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Du feu ! Attention !",
+			  "text": "BOOM !",
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 42.2,
+			"type": "dialogue_quick",
+			"data": {
+			  "character": "alex_2",
+			  "text": "Woah !",
+			  "duration": 1.0
+			}
+		  },
+		  {
+			"time": 44.0,
+			"type": "start_weather",
+			"data": {
+			  "weather": "snow",
+			  "intensity": 1.2
+			}
+		  },
+		  {
+			"time": 45.0,
+			"type": "dialogue_main",
+			"data": {
+			  "text": "Et maintenant, testons la [color=cyan]neige[/color] avec plusieurs effets simultanés !",
+			  "duration": 4.0
+			}
+		  },
+		  {
+			"time": 46.0,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 600, "y": 300},
+			  "params": {"intensity": 1.0}
+			}
+		  },
+		  {
+			"time": 46.5,
+			"type": "play_effect",
+			"data": {
+			  "effect": "magic_sparkles",
+			  "position": {"x": 700, "y": 320},
+			  "params": {"intensity": 1.5}
+			}
+		  },
+		  {
+			"time": 47.0,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_1",
+			  "emoji": "❄️",
 			  "duration": 2.0
 			}
 		  },
 		  {
-			"time": 18.0,
+			"time": 47.5,
+			"type": "dialogue_smiley",
+			"data": {
+			  "character": "alex_2",
+			  "emoji": "⛄",
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 49.0,
+			"type": "camera_move",
+			"data": {
+			  "position": {"x": 400, "y": 300},
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 50.0,
+			"type": "dialogue_main",
+			"data": {
+			  "text": "[center][color=green]🎉 SHOWCASE TERMINÉ ! 🎉[/color][/center]\n\n[b]Fonctionnalités démontrées :[/b]\n• Système d'ombres automatiques\n• 3 types de dialogues (Main, Smiley, Quick)\n• Effets visuels et particules\n• Caméra cinématique\n• Système météo\n• Mouvements fluides",
+			  "duration": 8.0
+			}
+		  },
+		  {
+			"time": 52.0,
 			"type": "stop_weather",
 			"data": {
 			  "weather": "snow"
 			}
 		  },
 		  {
-			"time": 18.5,
+			"time": 53.0,
 			"type": "play_effect",
 			"data": {
 			  "effect": "magic_sparkles",
-			  "position": {"x": 400, "y": 300},
-			  "params": {"intensity": 2.0}
+			  "position": {"x": 650, "y": 250},
+			  "params": {"intensity": 3.0}
 			}
 		  },
 		  {
-			"time": 19.0,
-			"type": "play_effect",
-			"data": {
-			  "effect": "magic_sparkles",
-			  "position": {"x": 500, "y": 350},
-			  "params": {"intensity": 1.5}
-			}
-		  },
-		  {
-			"time": 19.5,
-			"type": "play_effect",
-			"data": {
-			  "effect": "magic_sparkles",
-			  "position": {"x": 350, "y": 400},
-			  "params": {"intensity": 1.8}
-			}
-		  },
-		  {
-			"time": 20.0,
+			"time": 54.0,
 			"type": "screen_flash",
 			"data": {
-			  "color": {"r": 0.5, "g": 0.0, "b": 1.0, "a": 0.6},
+			  "color": {"r": 1.0, "g": 1.0, "b": 1.0, "a": 0.8},
 			  "duration": 0.5
 			}
 		  },
 		  {
-			"time": 21.0,
-			"type": "dialogue",
+			"time": 55.0,
+			"type": "dialogue_smiley",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Magie partout ! C'est magnifique !",
-			  "duration": 3.0
+			  "emoji": "🎬",
+			  "duration": 2.0
 			}
 		  },
 		  {
-			"time": 24.0,
-			"type": "start_weather",
+			"time": 55.5,
+			"type": "dialogue_smiley",
 			"data": {
-			  "weather": "rain",
-			  "intensity": 0.3
+			  "character": "alex_2",
+			  "emoji": "🚀",
+			  "duration": 2.0
 			}
 		  },
 		  {
-			"time": 25.0,
-			"type": "dialogue",
+			"time": 57.0,
+			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Une petite pluie pour finir...",
-			  "duration": 2.5
+			  "to": {"x": 500, "y": 400},
+			  "duration": 1.0
 			}
 		  },
 		  {
-			"time": 27.0,
-			"type": "stop_weather",
+			"time": 57.5,
+			"type": "character_move",
 			"data": {
-			  "weather": "rain"
+			  "character": "alex_2",
+			  "to": {"x": 800, "y": 400},
+			  "duration": 1.0
 			}
 		  }
 		]

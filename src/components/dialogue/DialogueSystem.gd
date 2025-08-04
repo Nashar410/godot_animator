@@ -2,199 +2,414 @@ class_name DialogueSystem extends Control
 
 signal dialogue_finished
 
-var typing_speed: float = 0.05
+# === TYPES DE DIALOGUE ===
+enum DialogueType {
+	MAIN,    # Style Pokémon - Panel plein écran
+	SMILEY,  # Bulle avec émoji/expression
+	QUICK    # Micro-réaction rapide
+}
+
+var current_character_id: String = ""
+
+# === PARAMÈTRES ===
+var typing_speed_main: float = 0.03      # Rapide pour dialogue principal
+var typing_speed_quick: float = 0.01     # Ultra-rapide pour réactions
 var is_typing: bool = false
 var current_text: String = ""
 var target_text: String = ""
 var typing_timer: float = 0.0
 
-# Nodes UI
-var bubble_container: Control
-var bubble_background: NinePatchRect
-var text_label: RichTextLabel
-var arrow_indicator: TextureRect
+# === NODES DIALOGUE PRINCIPAL ===
+var main_dialogue_panel: Panel
+var main_text_label: RichTextLabel
+var main_portrait: TextureRect
+var main_continue_arrow: TextureRect
 
-# Styles de bulles
-var bubble_styles = {
-	"normal": null,  # Sera chargé depuis les assets
-	"shout": null,
-	"thought": null
-}
+# === NODES DIALOGUE SMILEY ===
+var smiley_container: Control
+var smiley_background: NinePatchRect
+var smiley_label: Label
+
+# === NODES DIALOGUE RAPIDE ===
+var quick_container: Control
+var quick_background: ColorRect
+var quick_label: Label
+
+# === PARAMÈTRES ACTUELS ===
+var current_dialogue_type: DialogueType
+var current_character_pos: Vector2
+var current_duration: float
 
 func _ready():
-	print("DialogueSystem initialized")
-	_setup_ui()
-	hide()  # Caché par défaut
+	print("DialogueSystem Polish initialized")
+	_setup_main_dialogue()
+	_setup_smiley_dialogue()
+	_setup_quick_dialogue()
+	hide()
 
-func _setup_ui():
-	# Container principal pour la bulle
-	bubble_container = Control.new()
-	bubble_container.name = "BubbleContainer"
-	bubble_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(bubble_container)
+# === SETUP DIALOGUE PRINCIPAL ===
+func _setup_main_dialogue():
+	# Panel principal en bas d'écran (style Pokémon)
+	main_dialogue_panel = Panel.new()
+	main_dialogue_panel.name = "MainDialoguePanel"
 	
-	# Background de la bulle (NinePatch pour adaptation automatique)
-	bubble_background = NinePatchRect.new()
-	bubble_background.name = "BubbleBackground"
-	bubble_background.texture = _load_bubble_texture("normal")
-	bubble_container.add_child(bubble_background)
+	# Position : 80% en bas, centré
+	main_dialogue_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	main_dialogue_panel.size = Vector2(1700, 200)
+	main_dialogue_panel.position = Vector2(110, -220)  # Centré avec marge
 	
-	# Label pour le texte
-	text_label = RichTextLabel.new()
-	text_label.name = "TextLabel"
-	text_label.bbcode_enabled = true
-	text_label.fit_content = true
-	text_label.scroll_active = false
-	bubble_background.add_child(text_label)
+	# Style panel (fond noir semi-transparent)
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color(0, 0, 0, 0.8)
+	style_box.border_width_top = 3
+	style_box.border_color = Color.WHITE
+	style_box.corner_radius_top_left = 10
+	style_box.corner_radius_top_right = 10
+	main_dialogue_panel.add_theme_stylebox_override("panel", style_box)
 	
-	# Flèche indicatrice (fin de dialogue)
-	arrow_indicator = TextureRect.new()
-	arrow_indicator.name = "ArrowIndicator"
-	arrow_indicator.texture = _load_arrow_texture()
-	arrow_indicator.visible = false
-	bubble_background.add_child(arrow_indicator)
+	add_child(main_dialogue_panel)
 	
-	_configure_text_style()
+	# Portrait du personnage (gauche)
+	main_portrait = TextureRect.new()
+	main_portrait.name = "Portrait"
+	main_portrait.size = Vector2(150, 150)
+	main_portrait.position = Vector2(25, 25)
+	main_portrait.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	main_dialogue_panel.add_child(main_portrait)
+	
+	# Texte principal
+	main_text_label = RichTextLabel.new()
+	main_text_label.name = "MainText"
+	main_text_label.position = Vector2(200, 30)
+	main_text_label.size = Vector2(1400, 120)
+	main_text_label.bbcode_enabled = true
+	main_text_label.scroll_active = false
+	main_text_label.fit_content = true
+	
+	# Style texte
+	main_text_label.add_theme_font_size_override("normal_font_size", 24)
+	main_text_label.add_theme_color_override("default_color", Color.WHITE)
+	main_dialogue_panel.add_child(main_text_label)
+	
+	# Flèche "continuer"
+	main_continue_arrow = TextureRect.new()
+	main_continue_arrow.name = "ContinueArrow"
+	main_continue_arrow.size = Vector2(32, 32)
+	main_continue_arrow.position = Vector2(1620, 160)
+	main_continue_arrow.texture = _create_arrow_texture()
+	main_continue_arrow.visible = false
+	main_dialogue_panel.add_child(main_continue_arrow)
+	
+	main_dialogue_panel.visible = false
 
-func _configure_text_style():
-	# Style du texte pour pixel art
-	text_label.add_theme_font_size_override("normal_font_size", 16)
-	text_label.add_theme_color_override("default_color", Color.BLACK)
+# === SETUP DIALOGUE SMILEY ===
+func _setup_smiley_dialogue():
+	smiley_container = Control.new()
+	smiley_container.name = "SmileyContainer"
+	smiley_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(smiley_container)
 	
-	# Marges internes
-	text_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	text_label.position = Vector2(12, 8)
-	text_label.size = bubble_background.size - Vector2(24, 16)
+	# Bulle smiley
+	smiley_background = NinePatchRect.new()
+	smiley_background.name = "SmileyBubble"
+	smiley_background.texture = _create_smiley_bubble_texture()
+	smiley_background.size = Vector2(80, 60)
+	smiley_container.add_child(smiley_background)
+	
+	# Label pour emoji/expression
+	smiley_label = Label.new()
+	smiley_label.name = "SmileyText"
+	smiley_label.add_theme_font_size_override("font_size", 36)
+	smiley_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	smiley_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	smiley_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	smiley_background.add_child(smiley_label)
+	
+	smiley_container.visible = false
 
-func _load_bubble_texture(style: String) -> Texture2D:
-	var path = "res://assets/ui/bubble_" + style + ".png"
-	if FileAccess.file_exists(path):
-		return load(path)
-	else:
-		# Texture par défaut temporaire
-		var placeholder = ImageTexture.new()
-		var image = Image.create(64, 48, false, Image.FORMAT_RGBA8)
-		image.fill(Color(1, 1, 1, 0.9))  # Blanc semi-transparent
-		placeholder.set_image(image)
-		return placeholder
+# === SETUP DIALOGUE RAPIDE ===
+func _setup_quick_dialogue():
+	quick_container = Control.new()
+	quick_container.name = "QuickContainer"
+	quick_container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(quick_container)
+	
+	# Background rapide (semi-transparent)
+	quick_background = ColorRect.new()
+	quick_background.name = "QuickBackground"
+	quick_background.color = Color(0, 0, 0, 0.6)
+	quick_background.size = Vector2(120, 40)
+	quick_container.add_child(quick_background)
+	
+	# Texte rapide
+	quick_label = Label.new()
+	quick_label.name = "QuickText"
+	quick_label.add_theme_font_size_override("font_size", 18)
+	quick_label.add_theme_color_override("font_color", Color.WHITE)
+	quick_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	quick_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	quick_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	quick_background.add_child(quick_label)
+	
+	quick_container.visible = false
 
-func _load_arrow_texture() -> Texture2D:
-	var path = "res://assets/ui/dialogue_arrow.png"
-	if FileAccess.file_exists(path):
-		return load(path)
-	else:
-		# Texture par défaut temporaire
-		var placeholder = ImageTexture.new()
-		var image = Image.create(16, 16, false, Image.FORMAT_RGBA8)
-		image.fill(Color.BLACK)
-		placeholder.set_image(image)
-		return placeholder
-
-func show_dialogue(text: String, character_position: Vector2, style: String = "normal", duration: float = 3.0):
+func show_dialogue(text: String, character_position: Vector2, style: String = "main", duration: float = 3.0, character_id: String = ""):
 	target_text = text
 	current_text = ""
+	current_character_pos = character_position
+	current_duration = duration
+	current_character_id = character_id  # NOUVEAU : stocker l'ID
 	
-	# Positionner la bulle
-	_position_bubble(character_position)
-	
-	# Appliquer le style
-	_apply_bubble_style(style)
-	
-	# Démarrer l'animation de typage
-	_start_typing()
-	
-	# Timer pour auto-hide
-	if duration > 0:
-		var timer = get_tree().create_timer(duration)
-		timer.timeout.connect(_hide_dialogue)
+	# Déterminer le type de dialogue
+	match style:
+		"main", "normal":
+			current_dialogue_type = DialogueType.MAIN
+			_show_main_dialogue(character_id)
+		"smiley", "emoji", "expression":
+			current_dialogue_type = DialogueType.SMILEY
+			_show_smiley_dialogue()
+		"quick", "rapid", "reaction":
+			current_dialogue_type = DialogueType.QUICK
+			_show_quick_dialogue()
+		_:
+			current_dialogue_type = DialogueType.MAIN
+			_show_main_dialogue(character_id)
 	
 	show()
 
-func _position_bubble(character_pos: Vector2):
-	# Convertir position monde vers position écran
-	var camera = get_viewport().get_camera_2d()
-	var screen_pos = character_pos
+# === DIALOGUE PRINCIPAL ===
+func _show_main_dialogue(character_id: String):
+	_hide_all_dialogues()
+	main_dialogue_panel.visible = true
 	
-	if camera:
-		var viewport_size_v2 = Vector2(get_viewport().size)  # Convertir Vector2i en Vector2
-		screen_pos = character_pos - camera.global_position + viewport_size_v2 / 2
+	# Charger portrait si personnage spécifié
+	if character_id != "":
+		_load_character_portrait(character_id)
 	
-	# Position de base au-dessus du personnage
-	var bubble_pos = screen_pos + Vector2(0, -60)
+	# Démarrer l'animation de typage
+	_start_typing(DialogueType.MAIN)
 	
-	# Calculer taille de la bulle basée sur le texte
-	var estimated_width = target_text.length() * 8 + 24  # Approximation
-	estimated_width = min(estimated_width, 300)  # Max width
-	var estimated_height = 48
-	
-	# Ajustements pour rester à l'écran
-	var viewport_size = Vector2(get_viewport().size)  # Convertir Vector2i en Vector2
-	
-	if bubble_pos.x + estimated_width > viewport_size.x:
-		bubble_pos.x = viewport_size.x - estimated_width - 10
-	if bubble_pos.x < 10:
-		bubble_pos.x = 10
-	if bubble_pos.y < 10:
-		bubble_pos.y = screen_pos.y + 40  # En dessous si pas de place au-dessus
-	
-	# Appliquer position et taille
-	bubble_container.position = bubble_pos
-	bubble_background.size = Vector2(estimated_width, estimated_height)
-	text_label.size = Vector2(estimated_width - 24, estimated_height - 16)
+	# Auto-hide après duration
+	if current_duration > 0:
+		var timer = get_tree().create_timer(current_duration)
+		timer.timeout.connect(_hide_dialogue)
 
-func _apply_bubble_style(style: String):
-	# Changer texture selon le style
-	var texture = _load_bubble_texture(style)
-	bubble_background.texture = texture
+func _load_character_portrait(character_id: String):
+	var portrait_path = "res://assets/characters/" + character_id + "/portrait.png"
 	
-	# Ajustements spécifiques par style
-	match style:
-		"shout":
-			text_label.add_theme_color_override("default_color", Color.RED)
-		"thought":
-			text_label.add_theme_color_override("default_color", Color.BLUE)
-		_:
-			text_label.add_theme_color_override("default_color", Color.BLACK)
+	if FileAccess.file_exists(portrait_path):
+		main_portrait.texture = load(portrait_path)
+		main_portrait.visible = true
+	else:
+		main_portrait.visible = false
+		print("Portrait not found for: ", character_id)
 
-func _start_typing():
+# === DIALOGUE SMILEY ===
+func _show_smiley_dialogue():
+	_hide_all_dialogues()
+	
+	# Pas de positionnement fixe, on va suivre en temps réel
+	smiley_label.text = target_text  # Pas de typage pour smiley
+	smiley_container.visible = true
+	
+	# Animation bounce
+	_animate_smiley_bounce()
+	
+	# Auto-hide
+	var timer = get_tree().create_timer(current_duration)
+	timer.timeout.connect(_hide_dialogue)
+
+func _animate_smiley_bounce():
+	var tween = create_tween()
+	var original_scale = smiley_background.scale
+	
+	smiley_background.scale = Vector2.ZERO
+	tween.tween_property(smiley_background, "scale", original_scale * 1.2, 0.1)
+	tween.tween_property(smiley_background, "scale", original_scale, 0.1)
+
+# === DIALOGUE RAPIDE ===
+func _show_quick_dialogue():
+	_hide_all_dialogues()
+	
+	# Pas de positionnement fixe, on va suivre en temps réel
+	var text_width = target_text.length() * 10 + 20
+	text_width = max(text_width, 60)
+	quick_background.size = Vector2(text_width, 40)
+	
+	quick_container.visible = true
+	
+	# Typage ultra-rapide
+	_start_typing(DialogueType.QUICK)
+	
+	# Auto-hide rapide
+	var hide_timer = max(current_duration, 1.0)
+	var timer = get_tree().create_timer(hide_timer)
+	timer.timeout.connect(_hide_dialogue)
+
+# === SYSTÈME DE TYPAGE ===
+func _start_typing(dialogue_type: DialogueType):
 	is_typing = true
 	typing_timer = 0.0
-	text_label.text = ""
-	arrow_indicator.visible = false
+	current_text = ""
+	
+	# Réinitialiser les textes
+	match dialogue_type:
+		DialogueType.MAIN:
+			main_text_label.text = ""
+			main_continue_arrow.visible = false
+		DialogueType.QUICK:
+			quick_label.text = ""
 
 func _process(delta):
+	# NOUVELLE LOGIQUE : Suivre le personnage en temps réel
+	_update_character_following()
+	
+	# Typage existant
 	if not is_typing:
 		return
 	
 	typing_timer += delta
 	
-	if typing_timer >= typing_speed:
+	var speed = typing_speed_main
+	if current_dialogue_type == DialogueType.QUICK:
+		speed = typing_speed_quick
+	
+	if typing_timer >= speed:
 		typing_timer = 0.0
 		
 		if current_text.length() < target_text.length():
 			current_text += target_text[current_text.length()]
-			text_label.text = current_text
+			
+			match current_dialogue_type:
+				DialogueType.MAIN:
+					main_text_label.text = current_text
+				DialogueType.QUICK:
+					quick_label.text = current_text
 		else:
-			# Fin du typage
 			is_typing = false
-			arrow_indicator.visible = true
-			_position_arrow()
+			_on_typing_finished()
 
-func _position_arrow():
-	# Positionner la flèche en bas à droite de la bulle
-	arrow_indicator.position = Vector2(
-		bubble_background.size.x - 24,
-		bubble_background.size.y - 20
-	)
+func _update_character_following():
+	# Suivre le personnage pour smiley et quick
+	if current_dialogue_type == DialogueType.SMILEY and smiley_container.visible:
+		var bubble_pos = _convert_world_to_screen(current_character_pos)
+		bubble_pos += Vector2(-40, -100)  # DIRECTEMENT AU-DESSUS de la tête
+		bubble_pos = _clamp_to_screen(bubble_pos, Vector2(80, 60))
+		smiley_background.position = bubble_pos
+		
+		# Mise à jour en temps réel de la position du personnage
+		_update_current_character_position()
+	
+	elif current_dialogue_type == DialogueType.QUICK and quick_container.visible:
+		var quick_pos = _convert_world_to_screen(current_character_pos)
+		quick_pos += Vector2(-60, -80)  # DIRECTEMENT AU-DESSUS de la tête
+		quick_pos = _clamp_to_screen(quick_pos, Vector2(120, 40))
+		quick_background.position = quick_pos
+		
+		# Mise à jour en temps réel de la position du personnage
+		_update_current_character_position()
+
+func _update_current_character_position():
+	# Récupérer la position actuelle du personnage depuis le TimelineManager
+	var timeline_manager = get_node("../../../../TimelineController")
+	if timeline_manager:
+		var character_container = get_node("../../CharacterContainer")
+		# On doit stocker l'ID du personnage pour le retrouver
+		var character = character_container.get_node_or_null(current_character_id)
+		if character:
+			current_character_pos = character.global_position
+func _on_typing_finished():
+	match current_dialogue_type:
+		DialogueType.MAIN:
+			main_continue_arrow.visible = true
+			_animate_arrow()
+
+func _animate_arrow():
+	var tween = create_tween()
+	tween.set_loops()
+	tween.tween_property(main_continue_arrow, "modulate:a", 0.3, 0.5)
+	tween.tween_property(main_continue_arrow, "modulate:a", 1.0, 0.5)
+
+# === UTILITAIRES ===
+func _hide_all_dialogues():
+	main_dialogue_panel.visible = false
+	smiley_container.visible = false
+	quick_container.visible = false
 
 func _hide_dialogue():
+	_hide_all_dialogues()
 	hide()
 	dialogue_finished.emit()
 
+func _convert_world_to_screen(world_pos: Vector2) -> Vector2:
+	var camera = get_viewport().get_camera_2d()
+	if camera:
+		var viewport_size = Vector2(get_viewport().size)
+		return world_pos - camera.global_position + viewport_size / 2
+	return world_pos
+
+func _clamp_to_screen(pos: Vector2, size: Vector2) -> Vector2:
+	var viewport_size = Vector2(get_viewport().size)
+	pos.x = clamp(pos.x, 10, viewport_size.x - size.x - 10)
+	pos.y = clamp(pos.y, 10, viewport_size.y - size.y - 10)
+	return pos
+
+func _create_arrow_texture() -> Texture2D:
+	var image = Image.create(32, 32, false, Image.FORMAT_RGBA8)
+	image.fill(Color.TRANSPARENT)
+	
+	# Dessiner triangle simple
+	for y in range(8, 24):
+		for x in range(8, 24):
+			if x > y - 8 and x < 32 - (y - 8):
+				image.set_pixel(x, y, Color.WHITE)
+	
+	var texture = ImageTexture.new()
+	texture.set_image(image)
+	return texture
+
+func _create_smiley_bubble_texture() -> Texture2D:
+	var image = Image.create(80, 60, false, Image.FORMAT_RGBA8)
+	image.fill(Color.TRANSPARENT)
+	
+	# Bulle blanche avec contour
+	for y in range(5, 45):
+		for x in range(5, 75):
+			if (x - 40) * (x - 40) + (y - 25) * (y - 25) < 625:  # Cercle
+				image.set_pixel(x, y, Color.WHITE)
+			elif (x - 40) * (x - 40) + (y - 25) * (y - 25) < 700:
+				image.set_pixel(x, y, Color.BLACK)
+	
+	# Petite pointe vers le bas
+	for y in range(45, 55):
+		for x in range(35, 45):
+			if abs(x - 40) < (55 - y):
+				image.set_pixel(x, y, Color.WHITE)
+	
+	var texture = ImageTexture.new()
+	texture.set_image(image)
+	return texture
+
+# === API POUR FORCER COMPLÉTION ===
 func force_complete_text():
 	if is_typing:
 		current_text = target_text
-		text_label.text = current_text
+		
+		match current_dialogue_type:
+			DialogueType.MAIN:
+				main_text_label.text = current_text
+			DialogueType.QUICK:
+				quick_label.text = current_text
+		
 		is_typing = false
-		arrow_indicator.visible = true
-		_position_arrow()
+		_on_typing_finished()
+
+# === API SPÉCIALISÉES ===
+func show_main_dialogue(text: String, character_id: String = "", duration: float = 5.0):
+	show_dialogue(text, Vector2.ZERO, "main", duration, character_id)
+
+func show_smiley(emoji: String, character_position: Vector2, duration: float = 2.0):
+	show_dialogue(emoji, character_position, "smiley", duration)
+
+func show_quick_reaction(text: String, character_position: Vector2, duration: float = 1.5):
+	show_dialogue(text, character_position, "quick", duration)

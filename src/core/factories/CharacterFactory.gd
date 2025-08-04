@@ -10,15 +10,22 @@ const ANIMATION_STATES = {
 
 const DIRECTIONS = ["n", "e", "s", "w"]
 
+# Préchargement du script d'ombre
+const ShadowSystem = preload("res://src/components/shadows/ShadowSystem.gd")
+
 func create_character(character_id: String) -> CharacterBody2D:
 	var character = CharacterBody2D.new()
 	character.name = character_id
 	
-		# Pour le chargement des sprites, on utilise toujours le nom de base
+	# Pour le chargement des sprites, on utilise toujours le nom de base
 	var base_character_id = _extract_base_character_id(character_id)
 	
 	# Charger la configuration du personnage
 	var config = _load_character_config(base_character_id)
+	
+	# === SYSTÈME D'OMBRE (AJOUTÉ EN PREMIER) ===
+	var shadow_system = ShadowSystem.new()
+	character.add_child(shadow_system)
 	
 	# Sprite animé
 	var animated_sprite = AnimatedSprite2D.new()
@@ -44,6 +51,7 @@ func create_character(character_id: String) -> CharacterBody2D:
 	# Stocker la config dans le personnage pour usage ultérieur
 	character.set_meta("config", config)
 	
+	print("Character created with shadow: ", character_id)
 	return character
 
 func _extract_base_character_id(character_id: String) -> String:
@@ -62,7 +70,13 @@ func _load_character_config(character_id: String) -> Dictionary:
 			"sprite_scale": 1.0,
 			"collision_size": {"width": 16, "height": 24},
 			"animation_offsets": {},
-			"dialogue_offset": {"x": 0, "y": -40}
+			"dialogue_offset": {"x": 0, "y": -40},
+			"shadow_config": {
+				"enabled": true,
+				"opacity": 0.4,
+				"offset": {"x": 0, "y": 5},
+				"scale": {"x": 1.0, "y": 0.6}
+			}
 		}
 	
 	var file = FileAccess.open(config_path, FileAccess.READ)
@@ -76,7 +90,18 @@ func _load_character_config(character_id: String) -> Dictionary:
 		push_error("Failed to parse config JSON: " + config_path)
 		return {}
 	
-	return json.data.get("config", {})
+	var config = json.data.get("config", {})
+	
+	# Ajouter config d'ombre par défaut si manquante
+	if not config.has("shadow_config"):
+		config.shadow_config = {
+			"enabled": true,
+			"opacity": 0.4,
+			"offset": {"x": 0, "y": 5},
+			"scale": {"x": 1.0, "y": 0.6}
+		}
+	
+	return config
 
 func _has_valid_sprites(character_id: String) -> bool:
 	var idle_path = "res://assets/characters/" + character_id + "/sprites/idle/s.png"
@@ -156,3 +181,23 @@ func _load_animation_frames(sprite_frames: SpriteFrames, anim_name: String, base
 						sprite_frames.add_frame(anim_name, texture)
 						print("Loaded static sprite: ", static_frame_path)
 			break
+
+# === API POUR CONFIGURATION D'OMBRES ===
+func configure_character_shadow(character: CharacterBody2D, shadow_config: Dictionary):
+	var shadow_system = character.get_node_or_null("ShadowSystem")
+	if not shadow_system:
+		return
+	
+	if shadow_config.has("opacity"):
+		shadow_system.set_shadow_opacity(shadow_config.opacity)
+	
+	if shadow_config.has("offset"):
+		var offset = Vector2(shadow_config.offset.x, shadow_config.offset.y)
+		shadow_system.set_shadow_offset(offset)
+	
+	if shadow_config.has("scale"):
+		var scale = Vector2(shadow_config.scale.x, shadow_config.scale.y)
+		shadow_system.set_shadow_scale(scale)
+	
+	if shadow_config.get("enabled", true) == false:
+		shadow_system.hide_shadow()

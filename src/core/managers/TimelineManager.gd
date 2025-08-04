@@ -93,6 +93,12 @@ func _execute_event(event: Dictionary):
 			_handle_character_exit(event)
 		"dialogue":
 			_handle_dialogue(event)
+		"dialogue_main":
+			_handle_dialogue_main(event)
+		"dialogue_smiley":
+			_handle_dialogue_smiley(event)
+		"dialogue_quick":
+			_handle_dialogue_quick(event)
 		"play_music":
 			_handle_play_music(event)
 		"stop_music":
@@ -129,6 +135,97 @@ func _execute_event(event: Dictionary):
 			_handle_screen_flash(event)
 		_:
 			print("Unknown event type: ", event.type)
+
+# === NOUVEAUX HANDLERS DE DIALOGUE ===
+
+func _handle_dialogue_main(event: Dictionary):
+	var data = event.data
+	var character_id = data.get("character", "")
+	var text = data.text
+	var duration = data.get("duration", 5.0)
+	
+	# Jouer la voix si spécifiée
+	if data.has("voice"):
+		audio_manager.play_voice("voices/" + data.voice)
+	
+	# Afficher le dialogue principal
+	dialogue_system.show_main_dialogue(text, character_id, duration)
+	
+	print("Main dialogue shown: ", text)
+
+func _handle_dialogue_smiley(event: Dictionary):
+	var data = event.data
+	var character_id = data.character
+	var character = character_container.get_node_or_null(character_id)
+	
+	if not character:
+		push_error("Character not found for smiley dialogue: " + character_id)
+		return
+	
+	var emoji = data.emoji
+	var duration = data.get("duration", 2.0)
+	var character_pos = character.global_position
+	
+	# Afficher le smiley
+	dialogue_system.show_smiley(emoji, character_pos, duration)
+	
+	print("Smiley shown: ", character_id, " says: ", emoji)
+
+func _handle_dialogue_quick(event: Dictionary):
+	var data = event.data
+	var character_id = data.character
+	var character = character_container.get_node_or_null(character_id)
+	
+	if not character:
+		push_error("Character not found for quick dialogue: " + character_id)
+		return
+	
+	var text = data.text
+	var duration = data.get("duration", 1.5)
+	var character_pos = character.global_position
+	
+	# Afficher la réaction rapide
+	dialogue_system.show_quick_reaction(text, character_pos, duration)
+	
+	print("Quick reaction shown: ", character_id, " says: ", text)
+
+# === HANDLER DE DIALOGUE CLASSIQUE (RÉTROCOMPATIBILITÉ) ===
+
+func _handle_dialogue(event: Dictionary):
+	var data = event.data
+	var character_id = data.character
+	var character = character_container.get_node_or_null(character_id)
+	
+	if not character:
+		push_error("Character not found for dialogue: " + character_id)
+		return
+	
+	var text = data.text
+	var duration = data.get("duration", 3.0)
+	var style = data.get("bubble_style", "main")  # Défaut changé à "main"
+	
+	# Position du personnage pour la bulle
+	var character_pos = character.global_position
+	
+	# Jouer la voix si spécifiée
+	if data.has("voice"):
+		audio_manager.play_voice("voices/" + data.voice)
+	
+	# Afficher le dialogue selon le style
+	match style:
+		"main", "normal", "pokemon":
+			dialogue_system.show_main_dialogue(text, character_id, duration)
+		"smiley", "emoji", "expression":
+			dialogue_system.show_smiley(text, character_pos, duration)
+		"quick", "rapid", "reaction":
+			dialogue_system.show_quick_reaction(text, character_pos, duration)
+		_:
+			# Fallback sur l'ancien système de bulles
+			dialogue_system.show_dialogue(text, character_pos, style, duration, character_id)
+	
+	print("Dialogue shown: ", character_id, " says: ", text, " (style: ", style, ")")
+
+# === HANDLERS EXISTANTS ===
 
 func _handle_play_effect(event: Dictionary):
 	var data = event.data
@@ -355,28 +452,3 @@ func _handle_character_exit(event: Dictionary):
 	if character:
 		character.queue_free()
 		print("Character exited: ", character_id)
-
-func _handle_dialogue(event: Dictionary):
-	var data = event.data
-	var character_id = data.character
-	var character = character_container.get_node_or_null(character_id)
-	
-	if not character:
-		push_error("Character not found for dialogue: " + character_id)
-		return
-	
-	var text = data.text
-	var duration = data.get("duration", 3.0)
-	var style = data.get("bubble_style", "normal")
-	
-	# Position du personnage pour la bulle
-	var character_pos = character.global_position
-	
-	# Jouer la voix si spécifiée
-	if data.has("voice"):
-		audio_manager.play_voice("voices/" + data.voice)
-	
-	# Afficher le dialogue
-	dialogue_system.show_dialogue(text, character_pos, style, duration)
-	
-	print("Dialogue shown: ", character_id, " says: ", text)
