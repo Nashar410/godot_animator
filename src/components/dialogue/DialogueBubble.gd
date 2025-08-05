@@ -31,22 +31,22 @@ func _ready():
 	_setup_quick_bubble()
 	hide_all_bubbles()
 	
-	# Position absolue au-dessus du sprite, pas de l'ombre
-	bubble_offset = Vector2(0, -100)  # Plus haut pour être vraiment au-dessus
+	# Position plus proche de la tête du personnage
+	bubble_offset = Vector2(0, -60)  # RÉDUIT de -100 à -60
 
 func _setup_smiley_bubble():
-	# Container smiley - PLUS PETIT
+	# Container smiley - ENCORE PLUS PETIT
 	smiley_background = NinePatchRect.new()
 	smiley_background.name = "SmileyBubble"
 	smiley_background.texture = _create_smiley_bubble_texture()
-	smiley_background.size = Vector2(50, 40)  # RÉDUIT de 80x60 à 50x40
-	smiley_background.position = bubble_offset + Vector2(-25, 0)  # Recentré
+	smiley_background.size = Vector2(40, 32)  # ENCORE RÉDUIT de 50x40 à 40x32
+	smiley_background.position = bubble_offset + Vector2(-20, 0)  # Recentré
 	add_child(smiley_background)
 	
 	# Label emoji - PLUS PETIT
 	smiley_label = Label.new()
 	smiley_label.name = "SmileyText"
-	smiley_label.add_theme_font_size_override("font_size", 20)  # RÉDUIT de 36 à 20
+	smiley_label.add_theme_font_size_override("font_size", 12)  # RÉDUIT de 20 à 16
 	smiley_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	smiley_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	smiley_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -55,18 +55,18 @@ func _setup_smiley_bubble():
 	smiley_background.visible = false
 
 func _setup_quick_bubble():
-	# Container quick - PLUS PETIT
+	# Container quick - ENCORE PLUS PETIT
 	quick_background = ColorRect.new()
 	quick_background.name = "QuickBubble"
 	quick_background.color = Color(0, 0, 0, 0.8)
-	quick_background.size = Vector2(80, 30)  # RÉDUIT de 120x40 à 80x30
-	quick_background.position = bubble_offset + Vector2(-40, 0)  # Recentré
+	quick_background.size = Vector2(60, 24)  # RÉDUIT de 80x30 à 60x24
+	quick_background.position = bubble_offset + Vector2(-30, 0)  # Recentré
 	add_child(quick_background)
 	
 	# Label texte rapide - PLUS PETIT
 	quick_label = Label.new()
 	quick_label.name = "QuickText"
-	quick_label.add_theme_font_size_override("font_size", 14)  # RÉDUIT de 18 à 14
+	quick_label.add_theme_font_size_override("font_size", 12)  # RÉDUIT de 14 à 12
 	quick_label.add_theme_color_override("font_color", Color.WHITE)
 	quick_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	quick_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -110,10 +110,10 @@ func show_quick_reaction(text: String, duration: float = 1.5):
 	target_text = text
 	current_text = ""
 	
-	# Ajuster taille selon texte - PLUS PETIT
-	var text_width = text.length() * 8 + 20  # RÉDUIT de 12 à 8
-	text_width = max(text_width, 50)  # RÉDUIT de 80 à 50
-	quick_background.size = Vector2(text_width, 30)  # RÉDUIT hauteur de 40 à 30
+	# Ajuster taille selon texte - ENCORE PLUS PETIT
+	var text_width = text.length() * 6 + 16  # RÉDUIT de 8 à 6
+	text_width = max(text_width, 40)  # RÉDUIT de 50 à 40
+	quick_background.size = Vector2(text_width, 24)  # Hauteur réduite
 	quick_background.position = bubble_offset + Vector2(-text_width/2, 0)  # Recentrer
 	
 	quick_background.visible = true
@@ -169,21 +169,22 @@ func _animate_bounce(node: Control):
 
 # === UTILITAIRES ===
 func _create_smiley_bubble_texture() -> Texture2D:
-	var image = Image.create(80, 60, false, Image.FORMAT_RGBA8)
+	# PLUS PETITE bulle
+	var image = Image.create(60, 48, false, Image.FORMAT_RGBA8)  # RÉDUIT de 80x60
 	image.fill(Color.TRANSPARENT)
 	
-	# Bulle blanche avec contour
-	for y in range(5, 45):
-		for x in range(5, 75):
-			if (x - 40) * (x - 40) + (y - 25) * (y - 25) < 625:  # Cercle
+	# Bulle blanche avec contour - proportions adaptées
+	for y in range(4, 36):  # RÉDUIT
+		for x in range(4, 56):  # RÉDUIT
+			if (x - 30) * (x - 30) + (y - 20) * (y - 20) < 400:  # Cercle plus petit
 				image.set_pixel(x, y, Color.WHITE)
-			elif (x - 40) * (x - 40) + (y - 25) * (y - 25) < 700:
+			elif (x - 30) * (x - 30) + (y - 20) * (y - 20) < 480:
 				image.set_pixel(x, y, Color.BLACK)
 	
-	# Petite pointe vers le bas
-	for y in range(45, 55):
-		for x in range(35, 45):
-			if abs(x - 40) < (55 - y):
+	# Petite pointe vers le bas - proportionnée
+	for y in range(36, 44):
+		for x in range(26, 34):
+			if abs(x - 30) < (44 - y):
 				image.set_pixel(x, y, Color.WHITE)
 	
 	var texture = ImageTexture.new()

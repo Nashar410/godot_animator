@@ -16,10 +16,14 @@ func load_background(background_id: String, transition_duration: float = 0.0):
 	
 	print("Loading background: ", background_id)
 	
+	# IMPORTANT: Définir current_background AVANT de charger les données
+	current_background = background_id
+	
 	# Charger le nouveau background
 	var background_data = _load_background_data(background_id)
 	if background_data.is_empty():
 		push_error("Background not found: " + background_id)
+		current_background = ""  # Reset si échec
 		return
 	
 	if transition_duration > 0:
@@ -27,49 +31,67 @@ func load_background(background_id: String, transition_duration: float = 0.0):
 	else:
 		_apply_background_instantly(background_data)
 	
-	current_background = background_id
+	print("Background loaded successfully: ", background_id)
 
 func _load_background_data(background_id: String) -> Dictionary:
 	# Vérifier le cache
 	if background_cache.has(background_id):
 		return background_cache[background_id]
 	
-	# Charger depuis fichier JSON
+	# Chemin du fichier config
 	var config_path = "res://assets/tilesets/" + background_id + "/config.json"
 	
-	if not FileAccess.file_exists(config_path):
-		# Fallback : essayer de charger juste une image
-		var image_path = "res://assets/tilesets/" + background_id + ".png"
-		if FileAccess.file_exists(image_path):
-			var simple_bg = {
-				"type": "simple_image",
-				"image": image_path,
-				"layers": []
-			}
-			background_cache[background_id] = simple_bg
-			return simple_bg
-		return {}
+	# Essayer de charger depuis config.json
+	if FileAccess.file_exists(config_path):
+		var file = FileAccess.open(config_path, FileAccess.READ)
+		var json_string = file.get_as_text()
+		file.close()
+		
+		var json = JSON.new()
+		var parse_result = json.parse(json_string)
+		
+		if parse_result != OK:
+			push_error("Failed to parse background config: " + config_path)
+		else:
+			var data = json.data.get("background", {})
+			background_cache[background_id] = data
+			return data
 	
-	# Charger config complète
-	var file = FileAccess.open(config_path, FileAccess.READ)
-	var json_string = file.get_as_text()
-	file.close()
+	# Fallback 1: Image dans le dossier du background
+	var folder_image_path = "res://assets/tilesets/" + background_id + "/" + background_id + ".png"
+	if FileAccess.file_exists(folder_image_path):
+		var simple_bg = {
+			"type": "simple_image",
+			"image": folder_image_path
+		}
+		background_cache[background_id] = simple_bg
+		print("Found background image: ", folder_image_path)
+		return simple_bg
 	
-	var json = JSON.new()
-	var parse_result = json.parse(json_string)
+	# Fallback 2: Image directement dans tilesets/
+	var direct_image_path = "res://assets/tilesets/" + background_id + ".png"
+	if FileAccess.file_exists(direct_image_path):
+		var simple_bg = {
+			"type": "simple_image",
+			"image": direct_image_path
+		}
+		background_cache[background_id] = simple_bg
+		print("Found background image: ", direct_image_path)
+		return simple_bg
 	
-	if parse_result != OK:
-		push_error("Failed to parse background config: " + config_path)
-		return {}
+	# Aucun fichier trouvé
+	push_error("No background files found for: " + background_id)
+	push_error("Searched paths:")
+	push_error("  - " + config_path)
+	push_error("  - " + folder_image_path)
+	push_error("  - " + direct_image_path)
 	
-	var data = json.data.get("background", {})
-	background_cache[background_id] = data
-	return data
+	return {}
 
 func _apply_background_instantly(background_data: Dictionary):
 	_clear_current_background()
 	
-	match background_data.get("type", "parallax"):
+	match background_data.get("type", "simple_image"):
 		"simple_image":
 			_setup_simple_background(background_data)
 		"parallax":
@@ -87,11 +109,34 @@ func _clear_current_background():
 		tilemap_layer.clear()
 
 func _setup_simple_background(data: Dictionary):
-	var image_path = data.image
+	var image_path = data.get("image", "")
+	
+	print("Setting up simple background with image: ", image_path)
+	
+	# Si le chemin est déjà absolu, l'utiliser tel quel
+	if image_path.begins_with("res://"):
+		# Chemin déjà complet, ne rien faire
+		pass
+	else:
+		# Chemin relatif, essayer différentes possibilités
+		if current_background != "":
+			# Essayer dans le dossier du background
+			image_path = "res://assets/tilesets/" + current_background + "/" + image_path
+		else:
+			# Fallback si current_background est vide
+			push_error("current_background is empty, cannot resolve relative path: " + image_path)
+			return
+	
+	print("Final image path: ", image_path)
+	
+	if not FileAccess.file_exists(image_path):
+		push_error("Background image not found: " + image_path)
+		return
+	
 	var texture = load(image_path) as Texture2D
 	
 	if not texture:
-		push_error("Failed to load background image: " + image_path)
+		push_error("Failed to load background texture: " + image_path)
 		return
 	
 	# Créer layer parallax simple
@@ -105,11 +150,15 @@ func _setup_simple_background(data: Dictionary):
 	var scale = data.get("scale", 1.0)
 	sprite.scale = Vector2(scale, scale)
 	
+	# Position
+	var position = data.get("position", {"x": 0, "y": 0})
+	sprite.position = Vector2(position.x, position.y)
+	
 	parallax_layer.add_child(sprite)
 	background_container.add_child(parallax_layer)
 	
-	print("Simple background loaded: ", image_path)
-
+	print("✅ Simple background loaded successfully: ", image_path)
+	
 func _setup_parallax_background(data: Dictionary):
 	var layers = data.get("layers", [])
 	
@@ -225,3 +274,8 @@ func set_time_of_day(time: String, transition_duration: float = 2.0):
 		overlay.color = target_color
 	
 	print("Time of day changed to: ", time)
+
+# Test function - appelez ça dans _ready pour tester
+func test_load_castle_room():
+	print("=== TESTING CASTLE ROOM BACKGROUND ===")
+	load_background("castle_room", 0.0)
