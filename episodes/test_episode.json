@@ -1,23 +1,23 @@
 {
   "episode": {
 	"id": "episode_001",
-	"title": "Test Chambre Château - Pixel Art",
+	"title": "Test Forêt - Caméra Mobile + Dialogue",
 	"metadata": {
-	  "duration": 30,
-	  "resolution": "480x270",
+	  "duration": 40,
+	  "resolution": "320x180", 
 	  "fps": 30,
-	  "pixelScale": 4
+	  "pixelScale": 6
 	},
 	"scenes": [
 	  {
 		"id": "scene_001",
-		"duration": 30,
+		"duration": 40,
 		"timeline": [
 		  {
 			"time": 0.0,
 			"type": "change_background",
 			"data": {
-			  "background": "castle_room",
+			  "background": "forest_day",
 			  "transition_duration": 0.0
 			}
 		  },
@@ -26,8 +26,8 @@
 			"type": "character_enter",
 			"data": {
 			  "character": "alex_1",
-			  "position": {"x": 200, "y": 180},
-			  "scale": 0.3,
+			  "position": {"x": 300, "y": 400},
+			  "scale": 0.8,
 			  "animation": "idle",
 			  "direction": "e"
 			}
@@ -36,53 +36,35 @@
 			"time": 1.0,
 			"type": "dialogue_main",
 			"data": {
-			  "character": "alex_1",
-			  "text": "Me voici dans ma chambre du château !",
+			  "character": "alex_1", 
+			  "text": "Bonjour la forêt ! Le dialogue marche-t-il ?",
 			  "duration": 4.0
 			}
 		  },
 		  {
 			"time": 6.0,
-			"type": "character_move",
+			"type": "camera_follow",
 			"data": {
 			  "character": "alex_1",
-			  "to": {"x": 350, "y": 180},
-			  "duration": 3.0
+			  "smoothing": 2.0
 			}
 		  },
 		  {
-			"time": 10.0,
-			"type": "dialogue_main",
+			"time": 7.0,
+			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Le dialogue suit parfaitement la caméra !",
+			  "to": {"x": 800, "y": 400},
 			  "duration": 4.0
 			}
 		  },
 		  {
-			"time": 15.0,
-			"type": "camera_follow",
-			"data": {
-			  "character": "alex_1",
-			  "smoothing": 3.0
-			}
-		  },
-		  {
-			"time": 16.0,
-			"type": "character_move",
-			"data": {
-			  "character": "alex_1",
-			  "to": {"x": 1000, "y": 180},
-			  "duration": 5.0
-			}
-		  },
-		  {
-			"time": 18.0,
+			"time": 8.0,
 			"type": "dialogue_main",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Même quand je marche, le dialogue reste visible !",
-			  "duration": 3.0
+			  "text": "Je me balade dans la forêt avec ma caméra !",
+			  "duration": 4.0
 			}
 		  }
 		]

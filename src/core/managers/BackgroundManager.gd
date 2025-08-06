@@ -274,8 +274,3 @@ func set_time_of_day(time: String, transition_duration: float = 2.0):
 		overlay.color = target_color
 	
 	print("Time of day changed to: ", time)
-
-# Test function - appelez ça dans _ready pour tester
-func test_load_castle_room():
-	print("=== TESTING CASTLE ROOM BACKGROUND ===")
-	load_background("castle_room", 0.0)

@@ -148,11 +148,14 @@ func _handle_dialogue_main(event: Dictionary):
 	if data.has("voice"):
 		audio_manager.play_voice("voices/" + data.voice)
 	
-	# Afficher le dialogue principal
-	dialogue_system.show_main_dialogue(text, character_id, duration)
+	# NOUVEAU : Utiliser le système simple du Main
+	if dialogue_system.has_method("show_main_dialogue"):
+		dialogue_system.show_main_dialogue(text, character_id, duration)
+		print("✅ Dialogue sent to dialogue_system")
+	else:
+		print("❌ dialogue_system.show_main_dialogue not found!")
 	
-	print("Main dialogue shown: ", text)
-
+	print("Main dialogue handled: ", text)
 func _handle_dialogue_smiley(event: Dictionary):
 	var data = event.data
 	var character_id = data.character
