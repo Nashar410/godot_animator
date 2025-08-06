@@ -4,9 +4,9 @@
 	"title": "Test Chambre Château - Pixel Art",
 	"metadata": {
 	  "duration": 30,
-	  "resolution": "320x240",
+	  "resolution": "480x270",
 	  "fps": 30,
-	  "pixelScale": 1
+	  "pixelScale": 4
 	},
 	"scenes": [
 	  {
@@ -25,56 +25,64 @@
 			"time": 0.5,
 			"type": "character_enter",
 			"data": {
-			  "character": "king_8",
-			  "position": { "x": 250, "y": 140 },
-			  "scale": 0.5,
-			  "animation": "walk",
-			  "direction": "w"
+			  "character": "alex_1",
+			  "position": {"x": 200, "y": 180},
+			  "scale": 0.3,
+			  "animation": "idle",
+			  "direction": "e"
 			}
 		  },
 		  {
 			"time": 1.0,
-			"type": "character_move",
+			"type": "dialogue_main",
 			"data": {
-			  "character": "king_8",
-			  "to": { "x": 200, "y": 100 },
-			  "duration": 2.0
+			  "character": "alex_1",
+			  "text": "Me voici dans ma chambre du château !",
+			  "duration": 4.0
 			}
 		  },
 		  {
-			"time": 3.2,
+			"time": 6.0,
 			"type": "character_move",
 			"data": {
-			  "character": "king_8",
-			  "to": { "x": 80, "y": 100 },
-			  "duration": 2.0
-			}
-		  },
-		  {
-			"time": 5.5,
-			"type": "character_move",
-			"data": {
-			  "character": "king_8",
-			  "to": { "x": 80, "y": 140 },
-			  "duration": 2.0
-			}
-		  },
-		  {
-			"time": 8.0,
-			"type": "dialogue_quick",
-			"data": {
-			  "character": "king_8",
-			  "text": "Moi, King_8, je fais mon tour !",
-			  "duration": 2.0
+			  "character": "alex_1",
+			  "to": {"x": 350, "y": 180},
+			  "duration": 3.0
 			}
 		  },
 		  {
 			"time": 10.0,
-			"type": "character_exit",
+			"type": "dialogue_main",
 			"data": {
-			  "character": "king_8",
-			  "to": { "x": -50, "y": 140 },
-			  "duration": 2.0
+			  "character": "alex_1",
+			  "text": "Le dialogue suit parfaitement la caméra !",
+			  "duration": 4.0
+			}
+		  },
+		  {
+			"time": 15.0,
+			"type": "camera_follow",
+			"data": {
+			  "character": "alex_1",
+			  "smoothing": 3.0
+			}
+		  },
+		  {
+			"time": 16.0,
+			"type": "character_move",
+			"data": {
+			  "character": "alex_1",
+			  "to": {"x": 1000, "y": 180},
+			  "duration": 5.0
+			}
+		  },
+		  {
+			"time": 18.0,
+			"type": "dialogue_main",
+			"data": {
+			  "character": "alex_1",
+			  "text": "Même quand je marche, le dialogue reste visible !",
+			  "duration": 3.0
 			}
 		  }
 		]

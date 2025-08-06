@@ -5,6 +5,75 @@ extends Node2D
 @onready var background_manager = $BackgroundManager
 @onready var dialogue_system = $DialogueStage/UIContainer/DialogueSystem
 
+# === SYSTÈME DE DIALOGUE PRINCIPAL ===
+var dialogue_text_label: RichTextLabel
+var is_dialogue_typing: bool = false
+var dialogue_target_text: String = ""
+var dialogue_current_text: String = ""
+var dialogue_typing_speed: float = 0.05
+
+func _setup_dialogue_system():
+	"""Créer le système de dialogue principal"""
+	var dialogue_stage = $DialogueStage
+	
+	# Créer le label de texte principal
+	dialogue_text_label = RichTextLabel.new()
+	dialogue_text_label.name = "MainDialogueText"
+	dialogue_text_label.size = Vector2(460, 58)  # Un peu plus petit que l'étage
+	dialogue_text_label.position = Vector2(10, 5)  # Marge de 10px
+	dialogue_text_label.bbcode_enabled = true
+	dialogue_text_label.scroll_active = false
+	dialogue_text_label.fit_content = true
+	dialogue_text_label.add_theme_font_size_override("normal_font_size", 12)  # Taille pixel art
+	dialogue_text_label.add_theme_color_override("default_color", Color.WHITE)
+	
+	dialogue_stage.add_child(dialogue_text_label)
+	
+	print("✅ Dialogue system setup complete")
+
+func show_dialogue(text: String, character_id: String = "", duration: float = 5.0):
+	"""Afficher dialogue principal (style Pokémon)"""
+	print("🗨️ Showing main dialogue: ", text)
+	
+	var dialogue_stage = $DialogueStage
+	dialogue_stage.visible = true
+	
+	# Démarrer l'animation de typage
+	dialogue_target_text = text
+	dialogue_current_text = ""
+	is_dialogue_typing = true
+	dialogue_text_label.text = ""
+	
+	# Auto-hide après duration
+	if duration > 0:
+		var timer = get_tree().create_timer(duration)
+		timer.timeout.connect(_hide_dialogue)
+
+func _process(delta):
+	_update_dialogue_typing(delta)
+
+func _update_dialogue_typing(delta):
+	"""Animation typage pour dialogue principal"""
+	if not is_dialogue_typing:
+		return
+	
+	if dialogue_current_text.length() < dialogue_target_text.length():
+		# Ajouter un caractère
+		dialogue_current_text += dialogue_target_text[dialogue_current_text.length()]
+		dialogue_text_label.text = dialogue_current_text
+		
+		# Attendre avant le prochain caractère
+		await get_tree().create_timer(dialogue_typing_speed).timeout
+	else:
+		is_dialogue_typing = false
+		print("✅ Dialogue typing finished")
+
+func _hide_dialogue():
+	"""Masquer le dialogue"""
+	$DialogueStage.visible = false
+	is_dialogue_typing = false
+	print("🚪 Dialogue hidden")
+
 func _ready():
 	add_to_group("main")
 	
@@ -22,8 +91,6 @@ func _ready():
 	# Charger épisode SANS démarrer export automatique
 	episode_controller.load_episode("res://episodes/test_episode.json")
 
-func _process(delta):
-	_update_dialogue_position()
 
 func _update_dialogue_position():
 	"""Faire coller le DialogueStage à la caméra"""
@@ -46,47 +113,62 @@ func _update_dialogue_position():
 	)
 
 func _configure_stages():
-	"""Configuration 2 étages en PIXEL ART"""
+	"""Configuration 2 étages COHÉRENTS avec caméra pixel art"""
 	var animation_stage = $AnimationStage
 	var dialogue_stage = $DialogueStage
 	
-	# DIMENSIONS PIXEL ART
-	animation_stage.size = Vector2(320, 180)  # 75% de 240
+	# DIMENSIONS basées sur la vue caméra (480x270)
+	animation_stage.size = Vector2(480, 202)  # 75% de 270 = 202px
 	animation_stage.position = Vector2(0, 0)
 	
-	dialogue_stage.size = Vector2(320, 60)    # 25% de 240
-	dialogue_stage.position = Vector2(0, 180)
-	dialogue_stage.visible = false  # MASQUÉ par défaut
+	dialogue_stage.size = Vector2(480, 68)    # 25% de 270 = 68px  
+	dialogue_stage.position = Vector2(0, 202)
+	dialogue_stage.visible = false
 	
-	print("✅ Pixel Art stages: Animation(320x180) + Dialogue(320x60)")
+	# Fond de debug pour DialogueStage
+	var debug_bg = ColorRect.new()
+	debug_bg.name = "DebugBG"
+	debug_bg.color = Color(0, 0, 0, 0.8)  # Fond noir pour voir le dialogue
+	debug_bg.size = dialogue_stage.size
+	debug_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	dialogue_stage.add_child(debug_bg)
+	
+	print("✅ Pixel Art stages: Animation(480x202) + Dialogue(480x68)")
+	print("Total viewport: 480x270 (rendu 1920x1080 avec zoom 4x)")
+
 
 func _configure_camera():
-	"""Caméra pixel art 320x240 mais rendu 1920x1080"""
+	"""Caméra pixel art avec limites - null safe"""
 	var camera = $CameraSystem
 	
 	camera.enabled = true
 	camera.make_current()
 	
-	# Position au centre de la ZONE PIXEL ART
-	camera.position = Vector2(160, 120)  # Centre de 320x240
-	camera.zoom = Vector2(1, 1)  # Zoom 1x en pixel art
+	# PIXEL ART : zoom 4x 
+	camera.zoom = Vector2(4, 4)
+	camera.position = Vector2(240, 135)
+	
+	# LIMITES 
+	camera.limit_left = 240
+	camera.limit_right = 1680  
+	camera.limit_top = 135
+	camera.limit_bottom = 945
+	camera.limit_smoothed = true
+	
+	# UI SCALE - avec vérification
+	var ui_container = get_node_or_null("UIContainer")
+	if not ui_container:
+		ui_container = get_node_or_null("DialogueStage/UIContainer")
+	
+	if ui_container:
+		ui_container.scale = Vector2(4, 4)
+		print("✅ UI Container scaled to 4x")
+	else:
+		print("⚠️ UIContainer not found - check scene structure")
 	
 	camera.force_update_scroll()
 	
-	print("✅ Camera PIXEL ART: 320x240 viewport, scaled to 1920x1080")
-
-# Fonction simple pour montrer/cacher dialogue
-func show_dialogue(text: String, character_id: String = "", duration: float = 5.0):
-	var dialogue_stage = $DialogueStage
-	dialogue_stage.visible = true
-	
-	# Déléguer au DialogueSystem existant
-	var dialogue_system = dialogue_stage.get_node("UIContainer/DialogueSystem")
-	if dialogue_system:
-		dialogue_system.show_main_dialogue(text, character_id, duration)
-
-func _hide_dialogue():
-	$DialogueStage.visible = false
+	print("✅ Camera Pixel Art configured")
 
 func _input(event):
 	if event.is_action_pressed("ui_accept"):  # Espace
