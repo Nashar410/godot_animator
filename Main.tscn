@@ -18,8 +18,7 @@ script = ExtResource("1_uu6xs")
 script = ExtResource("1_glv2v")
 
 [node name="CameraSystem" type="Camera2D" parent="."]
-position = Vector2(400, 300)
-zoom = Vector2(4, 4)
+position = Vector2(960, 405)
 script = ExtResource("4_lgr22")
 
 [node name="AudioSystem" type="Node" parent="."]
@@ -51,8 +50,10 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = 1920.0
-offset_bottom = 810.0
+offset_left = 160.0
+offset_top = 120.0
+offset_right = 480.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 
