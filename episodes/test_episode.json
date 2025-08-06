@@ -1,6 +1,6 @@
 {
   "episode": {
-	"id": "episode_001", 
+	"id": "episode_001",
 	"title": "Test Chambre Château - Pixel Art",
 	"metadata": {
 	  "duration": 30,
@@ -25,83 +25,56 @@
 			"time": 0.5,
 			"type": "character_enter",
 			"data": {
-			  "character": "alex_1",
-			  "position": {"x": 80, "y": 140},
+			  "character": "king_8",
+			  "position": { "x": 250, "y": 140 },
 			  "scale": 0.5,
-			  "animation": "idle",
-			  "direction": "e"
+			  "animation": "walk",
+			  "direction": "w"
 			}
 		  },
 		  {
 			"time": 1.0,
-			"type": "dialogue_main",
-			"data": {
-			  "character": "alex_1",
-			  "text": "Me voici dans ma chambre !",
-			  "duration": 3.0
-			}
-		  },
-		  {
-			"time": 5.0,
 			"type": "character_move",
 			"data": {
-			  "character": "alex_1",
-			  "to": {"x": 200, "y": 140},
-			  "duration": 3.0
+			  "character": "king_8",
+			  "to": { "x": 200, "y": 100 },
+			  "duration": 2.0
 			}
 		  },
 		  {
-			"time": 9.0,
+			"time": 3.2,
+			"type": "character_move",
+			"data": {
+			  "character": "king_8",
+			  "to": { "x": 80, "y": 100 },
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 5.5,
+			"type": "character_move",
+			"data": {
+			  "character": "king_8",
+			  "to": { "x": 80, "y": 140 },
+			  "duration": 2.0
+			}
+		  },
+		  {
+			"time": 8.0,
 			"type": "dialogue_quick",
 			"data": {
-			  "character": "alex_1",
-			  "text": "Petit mais cosy !",
+			  "character": "king_8",
+			  "text": "Moi, King_8, je fais mon tour !",
 			  "duration": 2.0
 			}
 		  },
 		  {
-			"time": 12.0,
-			"type": "character_move",
+			"time": 10.0,
+			"type": "character_exit",
 			"data": {
-			  "character": "alex_1",
-			  "to": {"x": 250, "y": 100},
-			  "duration": 2.5
-			}
-		  },
-		  {
-			"time": 15.0,
-			"type": "dialogue_smiley",
-			"data": {
-			  "character": "alex_1",
-			  "emoji": "📚",
+			  "character": "king_8",
+			  "to": { "x": -50, "y": 140 },
 			  "duration": 2.0
-			}
-		  },
-		  {
-			"time": 17.0,
-			"type": "dialogue_main",
-			"data": {
-			  "character": "alex_1",
-			  "text": "Mes livres favoris !",
-			  "duration": 3.0
-			}
-		  },
-		  {
-			"time": 21.0,
-			"type": "character_move",
-			"data": {
-			  "character": "alex_1",
-			  "to": {"x": 160, "y": 120},
-			  "duration": 2.0
-			}
-		  },
-		  {
-			"time": 24.0,
-			"type": "dialogue_main",
-			"data": {
-			  "character": "alex_1",
-			  "text": "Perfect pour une série pixel art !",
-			  "duration": 3.0
 			}
 		  }
 		]

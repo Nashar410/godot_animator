@@ -18,7 +18,7 @@ script = ExtResource("1_uu6xs")
 script = ExtResource("1_glv2v")
 
 [node name="CameraSystem" type="Camera2D" parent="."]
-position = Vector2(960, 405)
+position = Vector2(160, 120)
 script = ExtResource("4_lgr22")
 
 [node name="AudioSystem" type="Node" parent="."]

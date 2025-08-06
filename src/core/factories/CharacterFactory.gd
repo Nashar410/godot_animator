@@ -1,8 +1,8 @@
 class_name CharacterFactory extends Node
 
 const ANIMATION_STATES = {
-	"idle": {"frames": 4, "fps": 6},
-	"walk": {"frames": 8, "fps": 12}
+	"idle": {"frames": 1, "fps": 6},
+	"walk": {"frames": 8, "fps": 16}
 	#"run": {"frames": 8, "fps": 16},
 	#"talk": {"frames": 4, "fps": 8},
 	#"attack": {"frames": 6, "fps": 12}
@@ -31,7 +31,6 @@ func create_character(character_id: String) -> CharacterBody2D:
 	
 	var sprite_scale = config.get("sprite_scale", 1.0)
 	animated_sprite.scale = Vector2(sprite_scale, sprite_scale)
-	
 	_load_animations(animated_sprite, base_character_id)
 	
 	# === SYSTÈME DE BULLE DIALOGUE (NOUVEAU) ===
@@ -67,6 +66,8 @@ func _load_character_config(character_id: String) -> Dictionary:
 		print("No config file found for ", character_id, ", using defaults")
 		return {
 			"sprite_scale": 1.0,
+			"frames": 8,
+			"fps": 12,
 			"collision_size": {"width": 16, "height": 24},
 			"animation_offsets": {},
 			"dialogue_offset": {"x": 0, "y": -40},
