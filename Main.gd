@@ -14,11 +14,6 @@ func _ready():
 	_configure_dialogue_stage()
 	_configure_camera()
 	
-	# Tests
-	await get_tree().create_timer(1.0).timeout
-	
-	await get_tree().create_timer(2.0).timeout
-	show_dialogue("Test du dialogue collé à la caméra mobile !", "", 8.0)
 	
 	# Charger épisode
 	episode_controller.load_episode("res://episodes/test_episode.json")
