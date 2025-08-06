@@ -1,12 +1,12 @@
 {
   "episode": {
-	"id": "episode_001",
-	"title": "Test Chambre Château - Adapté",
+	"id": "episode_001", 
+	"title": "Test Chambre Château - Pixel Art",
 	"metadata": {
 	  "duration": 30,
-	  "resolution": "1920x1080",
+	  "resolution": "320x240",
 	  "fps": 30,
-	  "pixelScale": 4
+	  "pixelScale": 1
 	},
 	"scenes": [
 	  {
@@ -26,8 +26,8 @@
 			"type": "character_enter",
 			"data": {
 			  "character": "alex_1",
-			  "position": {"x": 320, "y": 350},
-			  "scale": 0.35,
+			  "position": {"x": 80, "y": 140},
+			  "scale": 0.5,
 			  "animation": "idle",
 			  "direction": "e"
 			}
@@ -37,7 +37,7 @@
 			"type": "dialogue_main",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Me voici dans ma chambre du château !",
+			  "text": "Me voici dans ma chambre !",
 			  "duration": 3.0
 			}
 		  },
@@ -46,7 +46,7 @@
 			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "to": {"x": 480, "y": 350},
+			  "to": {"x": 200, "y": 140},
 			  "duration": 3.0
 			}
 		  },
@@ -55,7 +55,7 @@
 			"type": "dialogue_quick",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Quel beau tapis !",
+			  "text": "Petit mais cosy !",
 			  "duration": 2.0
 			}
 		  },
@@ -64,7 +64,7 @@
 			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "to": {"x": 580, "y": 280},
+			  "to": {"x": 250, "y": 100},
 			  "duration": 2.5
 			}
 		  },
@@ -82,7 +82,7 @@
 			"type": "dialogue_main",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Une bibliothèque bien garnie !",
+			  "text": "Mes livres favoris !",
 			  "duration": 3.0
 			}
 		  },
@@ -91,17 +91,17 @@
 			"type": "character_move",
 			"data": {
 			  "character": "alex_1",
-			  "to": {"x": 400, "y": 320},
+			  "to": {"x": 160, "y": 120},
 			  "duration": 2.0
 			}
 		  },
 		  {
 			"time": 24.0,
-			"type": "dialogue_quick",
+			"type": "dialogue_main",
 			"data": {
 			  "character": "alex_1",
-			  "text": "Perfect !",
-			  "duration": 1.5
+			  "text": "Perfect pour une série pixel art !",
+			  "duration": 3.0
 			}
 		  }
 		]

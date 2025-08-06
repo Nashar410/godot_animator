@@ -22,7 +22,6 @@ func _ready():
 	# Charger épisode SANS démarrer export automatique
 	episode_controller.load_episode("res://episodes/test_episode.json")
 
-
 func _process(delta):
 	_update_dialogue_position()
 
@@ -46,18 +45,6 @@ func _update_dialogue_position():
 		camera_bottom_left.y + 180  # En dessous de AnimationStage
 	)
 
-# Fonction simple pour montrer/cacher dialogue
-func show_dialogue(text: String, character_id: String = "", duration: float = 5.0):
-	var dialogue_stage = $DialogueStage
-	dialogue_stage.visible = true
-	
-	# Déléguer au DialogueSystem existant
-	var dialogue_system = dialogue_stage.get_node("UIContainer/DialogueSystem")
-	if dialogue_system:
-		dialogue_system.show_main_dialogue(text, character_id, duration)
-
-func _hide_dialogue():
-	$DialogueStage.visible = false
 func _configure_stages():
 	"""Configuration 2 étages en PIXEL ART"""
 	var animation_stage = $AnimationStage
@@ -88,6 +75,19 @@ func _configure_camera():
 	
 	print("✅ Camera PIXEL ART: 320x240 viewport, scaled to 1920x1080")
 
+# Fonction simple pour montrer/cacher dialogue
+func show_dialogue(text: String, character_id: String = "", duration: float = 5.0):
+	var dialogue_stage = $DialogueStage
+	dialogue_stage.visible = true
+	
+	# Déléguer au DialogueSystem existant
+	var dialogue_system = dialogue_stage.get_node("UIContainer/DialogueSystem")
+	if dialogue_system:
+		dialogue_system.show_main_dialogue(text, character_id, duration)
+
+func _hide_dialogue():
+	$DialogueStage.visible = false
+
 func _input(event):
 	if event.is_action_pressed("ui_accept"):  # Espace
 		episode_controller.play_episode()
@@ -100,7 +100,7 @@ func _input(event):
 		background_manager.load_background("castle_room", 0.0)
 	
 	if Input.is_key_pressed(KEY_D):  # Test dialogue
-		dialogue_system.show_main_dialogue("Test dialogue étage du bas !", "alex_1", 5.0)
+		show_dialogue("Test dialogue étage du bas !", "alex_1", 5.0)
 	
 	if Input.is_key_pressed(KEY_C):
 		var camera = $CameraSystem
@@ -112,14 +112,14 @@ func _input(event):
 		print("Global Position: ", camera.global_position)
 		
 		# Test déplacement forcé
-		camera.position = Vector2(randf() * 1920, randf() * 1080)
+		camera.position = Vector2(randf() * 320, randf() * 240)
 		print("NEW Position: ", camera.position)
 	
 	# RESET CAMÉRA
 	if Input.is_key_pressed(KEY_R):
 		var camera = $CameraSystem
-		camera.position = Vector2(960, 540)
+		camera.position = Vector2(160, 120)
 		camera.zoom = Vector2(1, 1)
 		camera.enabled = true
 		camera.make_current()
-		print("🔄 Camera RESET to center screen")
+		print("🔄 Camera RESET to pixel art center")
