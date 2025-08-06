@@ -1,6 +1,6 @@
 class_name EffectsManager extends Node
 
-@onready var effects_container = get_node("../SceneContainer/EffectsContainer")
+@onready var effects_container = get_node("../AnimationStage/SceneContainer/EffectsContainer")
 
 # Cache des effets
 var effect_templates: Dictionary = {}

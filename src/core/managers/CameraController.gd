@@ -93,7 +93,7 @@ func camera_zoom_to(target_zoom: float, duration: float, easing: String = "ease_
 	print("Camera zooming to: ", target_zoom)
 
 func camera_follow_character(character_id: String, offset: Vector2 = Vector2.ZERO, smoothing: float = 5.0):
-	var character_container = get_node("../SceneContainer/CharacterContainer")
+	var character_container = get_node("../AnimationStage/SceneContainer/CharacterContainer")
 	var character = character_container.get_node_or_null(character_id)
 	
 	if not character:

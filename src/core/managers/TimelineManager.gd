@@ -9,8 +9,8 @@ var is_playing: bool = false
 var timeline_data: Array = []
 
 @onready var character_factory = get_node("../CharacterFactory")
-@onready var character_container = get_node("../SceneContainer/CharacterContainer")
-@onready var dialogue_system = get_node("../SceneContainer/UIContainer/DialogueSystem")
+@onready var character_container = get_node("../AnimationStage/SceneContainer/CharacterContainer")
+@onready var dialogue_system = get_node("../DialogueStage/UIContainer/DialogueSystem")
 @onready var audio_manager = get_node("../AudioSystem")
 @onready var camera_controller = get_node("../CameraSystem")
 @onready var background_manager = get_node("../BackgroundManager")

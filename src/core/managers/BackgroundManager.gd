@@ -1,7 +1,7 @@
 class_name BackgroundManager extends Node
 
-@onready var background_container = get_node("../SceneContainer/Background")
-@onready var tilemap_layer = get_node("../SceneContainer/TileMapLayer")
+@onready var background_container = get_node("../AnimationStage/SceneContainer/Background")
+@onready var tilemap_layer = get_node("../AnimationStage/SceneContainer/TileMapLayer")
 
 # Cache des backgrounds
 var background_cache: Dictionary = {}
