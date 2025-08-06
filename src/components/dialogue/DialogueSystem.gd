@@ -2,18 +2,12 @@ class_name DialogueSystem extends Control
 
 signal dialogue_finished
 
-# === TYPES DE DIALOGUE ===
-enum DialogueType {
-	MAIN    # Style Pokémon - Panel plein écran seulement
-}
-
 # === PARAMÈTRES ===
 var typing_speed_main: float = 0.03
 var is_typing: bool = false
 var current_text: String = ""
 var target_text: String = ""
 var typing_timer: float = 0.0
-var current_dialogue_type: DialogueType = DialogueType.MAIN
 var current_duration: float
 
 # === NODES DIALOGUE PRINCIPAL ===
@@ -25,21 +19,21 @@ var main_continue_arrow: TextureRect
 func _ready():
 	print("DialogueSystem initialized - Main dialogue only")
 	_setup_main_dialogue()
-	hide()
+	visible = false
 
 func _setup_main_dialogue():
 	# Panel principal en bas d'écran (style Pokémon)
 	main_dialogue_panel = Panel.new()
 	main_dialogue_panel.name = "MainDialoguePanel"
 	
-	# Position : 80% en bas, centré
+	# Position : en bas, centré
 	main_dialogue_panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 	main_dialogue_panel.size = Vector2(1700, 200)
 	main_dialogue_panel.position = Vector2(110, -220)
 	
-	# Style panel
+	# Style panel avec fond noir
 	var style_box = StyleBoxFlat.new()
-	style_box.bg_color = Color(0, 0, 0, 0.8)
+	style_box.bg_color = Color(0, 0, 0, 0.9)
 	style_box.border_width_top = 3
 	style_box.border_color = Color.WHITE
 	style_box.corner_radius_top_left = 10
@@ -54,6 +48,7 @@ func _setup_main_dialogue():
 	main_portrait.size = Vector2(150, 150)
 	main_portrait.position = Vector2(25, 25)
 	main_portrait.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	main_portrait.visible = false  # Masqué par défaut
 	main_dialogue_panel.add_child(main_portrait)
 	
 	# Texte principal
@@ -78,16 +73,21 @@ func _setup_main_dialogue():
 	main_dialogue_panel.add_child(main_continue_arrow)
 	
 	main_dialogue_panel.visible = false
+	print("✅ Main dialogue panel created and configured")
 
 # === API PUBLIQUE ===
 func show_main_dialogue(text: String, character_id: String = "", duration: float = 5.0):
+	print("🗨️ Showing main dialogue: ", text)
+	
 	target_text = text
 	current_text = ""
 	current_duration = duration
-	current_dialogue_type = DialogueType.MAIN
 	
 	_hide_all_dialogues()
+	
+	# Afficher le panel
 	main_dialogue_panel.visible = true
+	visible = true
 	
 	# Charger portrait si personnage spécifié
 	if character_id != "":
@@ -101,7 +101,7 @@ func show_main_dialogue(text: String, character_id: String = "", duration: float
 		var timer = get_tree().create_timer(current_duration)
 		timer.timeout.connect(_hide_dialogue)
 	
-	show()
+	print("✅ Main dialogue shown successfully")
 
 # === SYSTÈME DE TYPAGE ===
 func _start_typing():
@@ -113,6 +113,8 @@ func _start_typing():
 		main_text_label.text = ""
 	if main_continue_arrow:
 		main_continue_arrow.visible = false
+	
+	print("⌨️ Started typing animation")
 
 func _process(delta):
 	if not is_typing:
@@ -132,6 +134,7 @@ func _process(delta):
 			_on_typing_finished()
 
 func _on_typing_finished():
+	print("✅ Typing finished")
 	if main_continue_arrow:
 		main_continue_arrow.visible = true
 		_animate_arrow()
@@ -150,8 +153,9 @@ func _hide_all_dialogues():
 		main_dialogue_panel.visible = false
 
 func _hide_dialogue():
+	print("🚪 Hiding dialogue")
 	_hide_all_dialogues()
-	hide()
+	visible = false
 	dialogue_finished.emit()
 
 func _load_character_portrait(character_id: String):
@@ -163,15 +167,16 @@ func _load_character_portrait(character_id: String):
 	if FileAccess.file_exists(portrait_path):
 		main_portrait.texture = load(portrait_path)
 		main_portrait.visible = true
+		print("✅ Portrait loaded: ", portrait_path)
 	else:
 		main_portrait.visible = false
-		print("Portrait not found for: ", character_id)
+		print("⚠️ Portrait not found for: ", character_id)
 
 func _create_arrow_texture() -> Texture2D:
 	var image = Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	image.fill(Color.TRANSPARENT)
 	
-	# Dessiner triangle simple
+	# Dessiner triangle simple blanc
 	for y in range(8, 24):
 		for x in range(8, 24):
 			if x > y - 8 and x < 32 - (y - 8):
@@ -189,3 +194,8 @@ func force_complete_text():
 			main_text_label.text = current_text
 		is_typing = false
 		_on_typing_finished()
+
+# === TEST FUNCTION ===
+func test_dialogue():
+	print("🧪 Testing main dialogue...")
+	show_main_dialogue("Test dialogue system!", "", 10.0)

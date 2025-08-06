@@ -28,6 +28,7 @@ script = ExtResource("1_glv2v")
 [node name="EffectsContainer" type="Node2D" parent="SceneContainer"]
 
 [node name="UIContainer" type="CanvasLayer" parent="SceneContainer"]
+layer = 10
 
 [node name="DialogueSystem" type="Control" parent="SceneContainer/UIContainer"]
 layout_mode = 3

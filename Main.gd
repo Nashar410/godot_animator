@@ -13,14 +13,17 @@ func _ready():
 	# Attendre 1 seconde puis tester
 	await get_tree().create_timer(1.0).timeout
 	background_manager.test_load_castle_room()
-	
+	# Dans _ready(), après background_manager.test_load_castle_room()
+	var dialogue_system = get_node("SceneContainer/UIContainer/DialogueSystem")
+	await get_tree().create_timer(2.0).timeout
+	dialogue_system.test_dialogue()
 	# Test de chargement d'épisode
 	episode_controller.load_episode("res://episodes/test_episode.json")
 	
 	# Connecter signaux export
-	video_exporter.export_started.connect(_on_export_started)
-	video_exporter.export_progress.connect(_on_export_progress)
-	video_exporter.export_finished.connect(_on_export_finished)
+	#video_exporter.export_started.connect(_on_export_started)
+	#video_exporter.export_progress.connect(_on_export_progress)
+	#video_exporter.export_finished.connect(_on_export_finished)
 
 func _input(event):
 	if event.is_action_pressed("ui_accept"):  # Barre espace
@@ -35,14 +38,14 @@ func _input(event):
 		print("Manual background test...")
 		background_manager.load_background("castle_room", 0.0)
 
-func _on_export_started():
-	print("🎬 Export started!")
-
-func _on_export_progress(percentage: float):
-	print("📊 Export progress: ", "%.1f" % percentage, "%")
-
-func _on_export_finished(success: bool, file_path: String):
-	if success:
-		print("✅ Export finished: ", file_path)
-	else:
-		print("❌ Export failed: ", file_path)
+#func _on_export_started():
+	#print("🎬 Export started!")
+#
+#func _on_export_progress(percentage: float):
+	#print("📊 Export progress: ", "%.1f" % percentage, "%")
+#
+#func _on_export_finished(success: bool, file_path: String):
+	#if success:
+		#print("✅ Export finished: ", file_path)
+	#else:
+		#print("❌ Export failed: ", file_path)
